@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 )
@@ -34,26 +33,27 @@ var finances = Finances{
 	{3, "Investimento em Tesouro Direto", FinancialFreedom, 1200.00},
 }
 
-func health_check(w http.ResponseWriter, r *http.Request) {
+func healthCheck(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintf(w, "Health Check OK\n")
 }
 
-func get_all_finances(w http.ResponseWriter, r *http.Request) {
+func getFinances(w http.ResponseWriter, r *http.Request) {
 
 	for _, finance := range finances {
 		fmt.Fprintf(w, "ID: %v, Name: %v, Type: %v, Amount: %v\n", finance.Id, finance.Name, finance.Type, finance.Amount)
 	}
 }
 
-func create_finance(w http.ResponseWriter, r *http.Request) {
+func createFinance(w http.ResponseWriter, r *http.Request) {
 
-	defer r.Body.Close()
+	w.Header().Set("Content-Type", "application/json")
 
 	var finance = Finance{}
 
-	body, _ := io.ReadAll(r.Body)
-	if err := json.Unmarshal(body, &finance); err != nil {
+	err := json.NewDecoder(r.Body).Decode(&finance)
+
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -61,12 +61,17 @@ func create_finance(w http.ResponseWriter, r *http.Request) {
 	newId := len(finances) + 1
 	finance.Id = newId
 
-	fmt.Fprintf(w, "ID: %v, Name: %v, Type: %v, Amount: %v\n", finance.Id, finance.Name, finance.Type, finance.Amount)
-
 	finances = append(finances, finance)
+
+	err = json.NewEncoder(w).Encode(&finance)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
-func get_finance_by_id(w http.ResponseWriter, r *http.Request) {
+func getFinanceById(w http.ResponseWriter, r *http.Request) {
 
 	Id := r.PathValue("Id")
 
@@ -80,14 +85,30 @@ func get_finance_by_id(w http.ResponseWriter, r *http.Request) {
 	http.NotFound(w, r)
 }
 
+// func updateFinanceById(w http.ResponseWriter, r *http.Request) {
+
+// 	Id := r.PathValue("Id")
+
+// 	for _, finance := range finances {
+// 		if fmt.Sprintf("%v", finance.Id) == Id {
+// 			fmt.Fprintf(w, "ID: %v, Name: %v, Type: %v, Amount: %v\n", finance.Id, finance.Name, finance.Type, finance.Amount)
+// 			return
+// 		}
+// 	}
+
+// 	http.NotFound(w, r)
+
+// }
+
 func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /", health_check)
-	mux.HandleFunc("GET /finances/{Id}/", get_finance_by_id)
-	mux.HandleFunc("GET /finances/", get_all_finances)
-	mux.HandleFunc("POST /finances/", create_finance)
+	mux.HandleFunc("GET /", healthCheck)
+	mux.HandleFunc("GET /finances/{Id}/", getFinanceById)
+	//mux.HandleFunc("PATCH /finances/{Id}/", updateFinanceById)
+	mux.HandleFunc("GET /finances/", getFinances)
+	mux.HandleFunc("POST /finances/", createFinance)
 
 	fmt.Printf("Starting server at port 8090\n")
 
