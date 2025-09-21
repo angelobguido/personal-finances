@@ -7,30 +7,36 @@ import (
 	"net/http"
 )
 
-type FinanceType string
+// type FinanceType string
 
-const (
-	FixedCost        FinanceType = "fixed_cost"
-	Comfort          FinanceType = "comfort"
-	Goals            FinanceType = "goals"
-	Pleasures        FinanceType = "pleasures"
-	FinancialFreedom FinanceType = "financial_freedom"
-	Knowledge        FinanceType = "knowledge"
-)
+// const (
+// 	FixedCost        FinanceType = "fixed_cost"
+// 	Comfort          FinanceType = "comfort"
+// 	Goals            FinanceType = "goals"
+// 	Pleasures        FinanceType = "pleasures"
+// 	FinancialFreedom FinanceType = "financial_freedom"
+// 	Knowledge        FinanceType = "knowledge"
+// )
 
 type Finance struct {
-	Id     int         `json:"id"`
-	Name   string      `json:"name"`
-	Type   FinanceType `json:"type"`
-	Amount float64     `json:"amount"`
+	Id     int     `json:"id"`
+	Name   string  `json:"name"`
+	Type   string  `json:"type"`
+	Amount float64 `json:"amount"`
+}
+
+type UpdateFinanceRequest struct {
+	Name   *string  `json:"name"`
+	Type   *string  `json:"type"`
+	Amount *float64 `json:"amount"`
 }
 
 type Finances []Finance
 
 var finances = Finances{
-	{1, "Aluguel", FixedCost, 373.94},
-	{2, "Crunchyroll", Pleasures, 14.99},
-	{3, "Investimento em Tesouro Direto", FinancialFreedom, 1200.00},
+	{1, "Aluguel", "FixedCost", 373.94},
+	{2, "Crunchyroll", "Pleasures", 14.99},
+	{3, "Investimento em Tesouro Direto", "FinancialFreedom", 1200.00},
 }
 
 func healthCheck(w http.ResponseWriter, r *http.Request) {
@@ -73,6 +79,8 @@ func createFinance(w http.ResponseWriter, r *http.Request) {
 
 func getFinanceById(w http.ResponseWriter, r *http.Request) {
 
+	fmt.Printf("Method: %v", r.Method)
+
 	Id := r.PathValue("Id")
 
 	for _, finance := range finances {
@@ -85,30 +93,59 @@ func getFinanceById(w http.ResponseWriter, r *http.Request) {
 	http.NotFound(w, r)
 }
 
-// func updateFinanceById(w http.ResponseWriter, r *http.Request) {
+func updateFinanceById(w http.ResponseWriter, r *http.Request) {
 
-// 	Id := r.PathValue("Id")
+	fmt.Printf("Method: %v", r.Method)
 
-// 	for _, finance := range finances {
-// 		if fmt.Sprintf("%v", finance.Id) == Id {
-// 			fmt.Fprintf(w, "ID: %v, Name: %v, Type: %v, Amount: %v\n", finance.Id, finance.Name, finance.Type, finance.Amount)
-// 			return
-// 		}
-// 	}
+	w.Header().Set("Content-Type", "application/json")
 
-// 	http.NotFound(w, r)
+	Id := r.PathValue("Id")
 
-// }
+	var updateFinanceRequest = UpdateFinanceRequest{}
+
+	err := json.NewDecoder(r.Body).Decode(&updateFinanceRequest)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	for i, finance := range finances {
+		if fmt.Sprintf("%v", finance.Id) == Id {
+			if updateFinanceRequest.Name != nil {
+				finances[i].Name = *updateFinanceRequest.Name
+			}
+			if updateFinanceRequest.Type != nil {
+				finances[i].Type = *updateFinanceRequest.Type
+			}
+			if updateFinanceRequest.Amount != nil {
+				finances[i].Amount = *updateFinanceRequest.Amount
+			}
+
+			err = json.NewEncoder(w).Encode(&finances[i])
+
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			return
+		}
+	}
+
+	http.NotFound(w, r)
+
+}
 
 func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /", healthCheck)
-	mux.HandleFunc("GET /finances/{Id}/", getFinanceById)
-	//mux.HandleFunc("PATCH /finances/{Id}/", updateFinanceById)
-	mux.HandleFunc("GET /finances/", getFinances)
-	mux.HandleFunc("POST /finances/", createFinance)
+	mux.HandleFunc("GET /{$}", healthCheck)
+	mux.HandleFunc("GET /finances/{Id}", getFinanceById)
+	mux.HandleFunc("PATCH /finances/{Id}", updateFinanceById)
+	mux.HandleFunc("GET /finances", getFinances)
+	mux.HandleFunc("POST /finances", createFinance)
 
 	fmt.Printf("Starting server at port 8090\n")
 
