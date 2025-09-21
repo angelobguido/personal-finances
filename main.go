@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"slices"
 )
 
 // type FinanceType string
@@ -162,6 +163,31 @@ func updateFinanceById(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func deleteFinanceById(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	id := r.PathValue("Id")
+
+	for i, finance := range finances {
+		if fmt.Sprintf("%v", finance.Id) == id {
+
+			finances = slices.Delete(finances, i, i+1)
+			err := json.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprintf("Finance with id %v deleted!", id)})
+
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			return
+		}
+	}
+
+	http.NotFound(w, r)
+
+}
+
 func main() {
 
 	mux := http.NewServeMux()
@@ -169,6 +195,7 @@ func main() {
 	mux.HandleFunc("GET /{$}", healthCheck)
 	mux.HandleFunc("GET /finances/{Id}", getFinanceById)
 	mux.HandleFunc("PATCH /finances/{Id}", updateFinanceById)
+	mux.HandleFunc("DELETE /finances/{Id}", deleteFinanceById)
 	mux.HandleFunc("GET /finances", getFinances)
 	mux.HandleFunc("POST /finances", createFinance)
 
