@@ -25,13 +25,13 @@ type Finance struct {
 	Amount float64 `json:"amount"`
 }
 
-type UpdateFinanceRequest struct {
+type Finances []Finance
+
+type FinanceRequest struct {
 	Name   *string  `json:"name"`
 	Type   *string  `json:"type"`
 	Amount *float64 `json:"amount"`
 }
-
-type Finances []Finance
 
 var finances = Finances{
 	{1, "Aluguel", "FixedCost", 373.94},
@@ -41,35 +41,58 @@ var finances = Finances{
 
 func healthCheck(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Fprintf(w, "Health Check OK\n")
+	w.Header().Set("Content-Type", "application/json")
+
+	err := json.NewEncoder(w).Encode(map[string]string{"message": "Health Check OK"})
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func getFinances(w http.ResponseWriter, r *http.Request) {
 
-	for _, finance := range finances {
-		fmt.Fprintf(w, "ID: %v, Name: %v, Type: %v, Amount: %v\n", finance.Id, finance.Name, finance.Type, finance.Amount)
+	w.Header().Set("Content-Type", "application/json")
+
+	err := json.NewEncoder(w).Encode(map[string]Finances{"data": finances})
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+
 }
 
 func createFinance(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	var finance = Finance{}
+	var financeRequest = FinanceRequest{}
 
-	err := json.NewDecoder(r.Body).Decode(&finance)
+	err := json.NewDecoder(r.Body).Decode(&financeRequest)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
+	if financeRequest.Amount == nil || financeRequest.Name == nil || financeRequest.Type == nil {
+		http.Error(w, "All fields are required!", http.StatusBadRequest)
+		return
+	}
+
+	var finance = Finance{}
+
 	newId := len(finances) + 1
 	finance.Id = newId
+	finance.Amount = *financeRequest.Amount
+	finance.Name = *financeRequest.Name
+	finance.Type = *financeRequest.Type
 
 	finances = append(finances, finance)
 
-	err = json.NewEncoder(w).Encode(&finance)
+	err = json.NewEncoder(w).Encode(map[string]Finance{"data": finance})
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -79,13 +102,18 @@ func createFinance(w http.ResponseWriter, r *http.Request) {
 
 func getFinanceById(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Printf("Method: %v", r.Method)
+	w.Header().Set("Content-Type", "application/json")
 
 	Id := r.PathValue("Id")
 
-	for _, finance := range finances {
+	for i, finance := range finances {
 		if fmt.Sprintf("%v", finance.Id) == Id {
-			fmt.Fprintf(w, "ID: %v, Name: %v, Type: %v, Amount: %v\n", finance.Id, finance.Name, finance.Type, finance.Amount)
+
+			err := json.NewEncoder(w).Encode(map[string]Finance{"data": finances[i]})
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 			return
 		}
 	}
@@ -95,15 +123,13 @@ func getFinanceById(w http.ResponseWriter, r *http.Request) {
 
 func updateFinanceById(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Printf("Method: %v", r.Method)
-
 	w.Header().Set("Content-Type", "application/json")
 
 	Id := r.PathValue("Id")
 
-	var updateFinanceRequest = UpdateFinanceRequest{}
+	var financeRequest = FinanceRequest{}
 
-	err := json.NewDecoder(r.Body).Decode(&updateFinanceRequest)
+	err := json.NewDecoder(r.Body).Decode(&financeRequest)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -112,18 +138,17 @@ func updateFinanceById(w http.ResponseWriter, r *http.Request) {
 
 	for i, finance := range finances {
 		if fmt.Sprintf("%v", finance.Id) == Id {
-			if updateFinanceRequest.Name != nil {
-				finances[i].Name = *updateFinanceRequest.Name
+			if financeRequest.Name != nil {
+				finances[i].Name = *financeRequest.Name
 			}
-			if updateFinanceRequest.Type != nil {
-				finances[i].Type = *updateFinanceRequest.Type
+			if financeRequest.Type != nil {
+				finances[i].Type = *financeRequest.Type
 			}
-			if updateFinanceRequest.Amount != nil {
-				finances[i].Amount = *updateFinanceRequest.Amount
+			if financeRequest.Amount != nil {
+				finances[i].Amount = *financeRequest.Amount
 			}
 
-			err = json.NewEncoder(w).Encode(&finances[i])
-
+			err := json.NewEncoder(w).Encode(map[string]Finance{"data": finances[i]})
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
