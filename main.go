@@ -173,18 +173,12 @@ func deleteFinanceById(w http.ResponseWriter, r *http.Request) {
 		if fmt.Sprintf("%v", finance.Id) == id {
 
 			finances = slices.Delete(finances, i, i+1)
-			err := json.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprintf("Finance with id %v deleted!", id)})
-
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
+			w.WriteHeader(http.StatusNoContent)
 			return
 		}
 	}
 
-	http.NotFound(w, r)
+	w.WriteHeader(http.StatusNoContent)
 
 }
 
