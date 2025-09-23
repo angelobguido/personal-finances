@@ -1,0 +1,14 @@
+services:
+  go-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    develop:
+      watch:
+        - path: .
+          target: /app
+          action: rebuild
+    ports:
+      - "8090:8090"
+    env_file:
+      - .env

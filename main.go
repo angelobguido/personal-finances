@@ -1,12 +1,18 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"slices"
+
+	_ "github.com/lib/pq"
 )
+
+var dbConnectionString = getEnv("DB_CONNECTION_STRING", "postgres://postgres:localpassword@db:5432/postgres?sslmode=disable")
 
 type Finance struct {
 	Id     int     `json:"id"`
@@ -156,6 +162,17 @@ func deleteFinanceById(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
+	db, err := sql.Open("postgres", dbConnectionString)
+	if err != nil {
+		log.Fatalf("FATAL: Error connecting to database: %v", err)
+	}
+	defer db.Close()
+
+	if err := db.Ping(); err != nil {
+		log.Fatalf("FATAL: Could not ping database: %v", err)
+	}
+	log.Println("Successfully connected to the database.")
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /{$}", healthCheck)
@@ -168,4 +185,11 @@ func main() {
 	fmt.Printf("Starting server at port 8090\n")
 
 	log.Fatal(http.ListenAndServe(":8090", mux))
+}
+
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
 }
