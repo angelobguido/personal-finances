@@ -40,46 +40,51 @@ var finances = Finances{
 	{3, "Investimento em Tesouro Direto", "FinancialFreedom", 1200.00},
 }
 
-func healthCheck(w http.ResponseWriter, r *http.Request) {
+func encode[T any](w http.ResponseWriter, v *T, status int) error {
 
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
 
-	err := json.NewEncoder(w).Encode(map[string]string{"message": "Health Check OK"})
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if err := json.NewEncoder(w).Encode(*v); err != nil {
+		return fmt.Errorf("encode json: %w", err)
 	}
+	return nil
+
+}
+
+func decode[T any](r *http.Request) (T, error) {
+
+	var v T
+	if err := json.NewDecoder(r.Body).Decode(&v); err != nil {
+		return v, fmt.Errorf("decode json: %w", err)
+	}
+	return v, nil
+
+}
+
+func healthCheck(w http.ResponseWriter, r *http.Request) {
+
+	encode(w, &map[string]string{"message": "The server is running!"}, http.StatusOK)
+
 }
 
 func getFinances(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Content-Type", "application/json")
-
-	err := json.NewEncoder(w).Encode(map[string]Finances{"data": finances})
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	encode(w, &map[string]Finances{"data": finances}, http.StatusOK)
 
 }
 
 func createFinance(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Content-Type", "application/json")
-
-	var financeRequest = FinanceRequest{}
-
-	err := json.NewDecoder(r.Body).Decode(&financeRequest)
+	financeRequest, err := decode[FinanceRequest](r)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		encode(w, &map[string]string{"error": "The body structure is wrong!"}, http.StatusBadRequest)
 		return
 	}
 
 	if financeRequest.Amount == nil || financeRequest.Name == nil || financeRequest.Type == nil {
-		http.Error(w, "All fields are required!", http.StatusBadRequest)
+		encode(w, &map[string]string{"error": "All fields are required!"}, http.StatusBadRequest)
 		return
 	}
 
@@ -93,52 +98,37 @@ func createFinance(w http.ResponseWriter, r *http.Request) {
 
 	finances = append(finances, finance)
 
-	err = json.NewEncoder(w).Encode(map[string]Finance{"data": finance})
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	encode(w, &map[string]Finance{"data": finance}, http.StatusCreated)
 }
 
 func getFinanceById(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Content-Type", "application/json")
-
-	Id := r.PathValue("Id")
+	id := r.PathValue("Id")
 
 	for i, finance := range finances {
-		if fmt.Sprintf("%v", finance.Id) == Id {
-
-			err := json.NewEncoder(w).Encode(map[string]Finance{"data": finances[i]})
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
+		if fmt.Sprintf("%v", finance.Id) == id {
+			encode(w, &map[string]Finance{"data": finances[i]}, http.StatusOK)
 			return
 		}
 	}
 
-	http.NotFound(w, r)
+	encode(w, &map[string]string{"error": fmt.Sprintf("Finance with id %v doesn't exist!", id)}, http.StatusNotFound)
+
 }
 
 func updateFinanceById(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Content-Type", "application/json")
+	id := r.PathValue("Id")
 
-	Id := r.PathValue("Id")
-
-	var financeRequest = FinanceRequest{}
-
-	err := json.NewDecoder(r.Body).Decode(&financeRequest)
+	financeRequest, err := decode[FinanceRequest](r)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		encode(w, &map[string]string{"error": "The body structure is wrong!"}, http.StatusBadRequest)
 		return
 	}
 
 	for i, finance := range finances {
-		if fmt.Sprintf("%v", finance.Id) == Id {
+		if fmt.Sprintf("%v", finance.Id) == id {
 			if financeRequest.Name != nil {
 				finances[i].Name = *financeRequest.Name
 			}
@@ -149,23 +139,16 @@ func updateFinanceById(w http.ResponseWriter, r *http.Request) {
 				finances[i].Amount = *financeRequest.Amount
 			}
 
-			err := json.NewEncoder(w).Encode(map[string]Finance{"data": finances[i]})
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
+			encode(w, &map[string]Finance{"data": finances[i]}, http.StatusOK)
 			return
 		}
 	}
 
-	http.NotFound(w, r)
+	encode(w, &map[string]string{"error": fmt.Sprintf("Finance with id %v doesn't exist!", id)}, http.StatusNotFound)
 
 }
 
 func deleteFinanceById(w http.ResponseWriter, r *http.Request) {
-
-	w.Header().Set("Content-Type", "application/json")
 
 	id := r.PathValue("Id")
 
