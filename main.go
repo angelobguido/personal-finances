@@ -8,17 +8,6 @@ import (
 	"slices"
 )
 
-// type FinanceType string
-
-// const (
-// 	FixedCost        FinanceType = "fixed_cost"
-// 	Comfort          FinanceType = "comfort"
-// 	Goals            FinanceType = "goals"
-// 	Pleasures        FinanceType = "pleasures"
-// 	FinancialFreedom FinanceType = "financial_freedom"
-// 	Knowledge        FinanceType = "knowledge"
-// )
-
 type Finance struct {
 	Id     int     `json:"id"`
 	Name   string  `json:"name"`
