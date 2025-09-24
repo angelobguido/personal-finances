@@ -123,15 +123,20 @@ func getFinanceById(w http.ResponseWriter, r *http.Request) {
 
 	id := r.PathValue("Id")
 
-	for i, finance := range finances {
-		if fmt.Sprintf("%v", finance.Id) == id {
-			encode(w, &map[string]Finance{"data": finances[i]}, http.StatusOK)
+	finance := Finance{}
+
+	if err := db.QueryRow("SELECT id, name, type, amount FROM finance WHERE id=$1", id).Scan(&finance.Id, &finance.Name, &finance.Type, &finance.Amount); err != nil {
+
+		if err == sql.ErrNoRows {
+			encode(w, &map[string]string{"error": fmt.Sprintf("Finance with id %v doesn't exist!", id)}, http.StatusNotFound)
 			return
 		}
+
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
-	encode(w, &map[string]string{"error": fmt.Sprintf("Finance with id %v doesn't exist!", id)}, http.StatusNotFound)
-
+	encode(w, &map[string]Finance{"data": finance}, http.StatusOK)
 }
 
 func updateFinanceById(w http.ResponseWriter, r *http.Request) {
