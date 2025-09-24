@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"slices"
 
 	_ "github.com/lib/pq"
 )
@@ -171,13 +170,15 @@ func deleteFinanceById(w http.ResponseWriter, r *http.Request) {
 
 	id := r.PathValue("Id")
 
-	for i, finance := range finances {
-		if fmt.Sprintf("%v", finance.Id) == id {
+	if err := db.QueryRow("DELETE FROM finance WHERE id=$1", id).Err(); err != nil {
 
-			finances = slices.Delete(finances, i, i+1)
+		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}
+
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)
