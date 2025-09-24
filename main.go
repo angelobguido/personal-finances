@@ -150,24 +150,20 @@ func updateFinanceById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for i, finance := range finances {
-		if fmt.Sprintf("%v", finance.Id) == id {
-			if financeRequest.Name != nil {
-				finances[i].Name = *financeRequest.Name
-			}
-			if financeRequest.Type != nil {
-				finances[i].Type = *financeRequest.Type
-			}
-			if financeRequest.Amount != nil {
-				finances[i].Amount = *financeRequest.Amount
-			}
+	finance := Finance{}
 
-			encode(w, &map[string]Finance{"data": finances[i]}, http.StatusOK)
+	if err := db.QueryRow("UPDATE finance SET name = COALESCE($1, name), type = COALESCE($2, type), amount = COALESCE($3, amount) WHERE id=$4 RETURNING id, name, type, amount", financeRequest.Name, financeRequest.Type, financeRequest.Amount, id).Scan(&finance.Id, &finance.Name, &finance.Type, &finance.Amount); err != nil {
+
+		if err == sql.ErrNoRows {
+			encode(w, &map[string]string{"error": fmt.Sprintf("Finance with id %v doesn't exist!", id)}, http.StatusNotFound)
 			return
 		}
+
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
-	encode(w, &map[string]string{"error": fmt.Sprintf("Finance with id %v doesn't exist!", id)}, http.StatusNotFound)
+	encode(w, &map[string]Finance{"data": finance}, http.StatusOK)
 
 }
 
