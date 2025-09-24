@@ -14,6 +14,8 @@ import (
 
 var dbConnectionString = getEnv("DB_CONNECTION_STRING", "postgres://postgres:localpassword@db:5432/postgres?sslmode=disable")
 
+var db *sql.DB
+
 type Finance struct {
 	Id     int     `json:"id"`
 	Name   string  `json:"name"`
@@ -64,6 +66,30 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 func getFinances(w http.ResponseWriter, r *http.Request) {
+
+	finances := []Finance{}
+
+	rows, err := db.Query("SELECT id, name, type, amount FROM finance")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var finance Finance
+		if err := rows.Scan(&finance.Id, &finance.Name, &finance.Type, &finance.Amount); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		finances = append(finances, finance)
+	}
+
+	if err := rows.Err(); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	encode(w, &map[string]Finances{"data": finances}, http.StatusOK)
 
@@ -162,7 +188,8 @@ func deleteFinanceById(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	db, err := sql.Open("postgres", dbConnectionString)
+	var err error
+	db, err = sql.Open("postgres", dbConnectionString)
 	if err != nil {
 		log.Fatalf("FATAL: Error connecting to database: %v", err)
 	}
