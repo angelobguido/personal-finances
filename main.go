@@ -111,13 +111,10 @@ func createFinance(w http.ResponseWriter, r *http.Request) {
 
 	var finance = Finance{}
 
-	newId := len(finances) + 1
-	finance.Id = newId
-	finance.Amount = *financeRequest.Amount
-	finance.Name = *financeRequest.Name
-	finance.Type = *financeRequest.Type
-
-	finances = append(finances, finance)
+	if err := db.QueryRow("INSERT INTO finance(name, amount, type) VALUES ($1, $2, $3) RETURNING id, name, type, amount", *financeRequest.Name, *financeRequest.Amount, *financeRequest.Type).Scan(&finance.Id, &finance.Name, &finance.Type, &finance.Amount); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	encode(w, &map[string]Finance{"data": finance}, http.StatusCreated)
 }
