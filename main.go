@@ -30,12 +30,6 @@ type FinanceRequest struct {
 	Amount *float64 `json:"amount"`
 }
 
-var finances = Finances{
-	{1, "Aluguel", "FixedCost", 373.94},
-	{2, "Crunchyroll", "Pleasures", 14.99},
-	{3, "Investimento em Tesouro Direto", "FinancialFreedom", 1200.00},
-}
-
 func encode[T any](w http.ResponseWriter, v *T, status int) error {
 
 	w.Header().Set("Content-Type", "application/json")
