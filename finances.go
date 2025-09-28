@@ -23,28 +23,8 @@ type FinanceRequest struct {
 	Amount *float64 `json:"amount"`
 }
 
-func getFinancesList() ([]Finance, error) {
-	finances := []Finance{}
-
-	rows, err := db.Query("SELECT id, name, type, amount FROM finance")
-	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		var finance Finance
-		if err := rows.Scan(&finance.Id, &finance.Name, &finance.Type, &finance.Amount); err != nil {
-			return nil, err
-		}
-		finances = append(finances, finance)
-	}
-
-	return finances, nil
-}
-
 func getFinances(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	finances := []Finance{}
 
@@ -76,6 +56,8 @@ func getFinances(w http.ResponseWriter, r *http.Request) {
 
 func createFinance(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	financeRequest, err := decode[FinanceRequest](r)
 
 	if err != nil {
@@ -100,6 +82,8 @@ func createFinance(w http.ResponseWriter, r *http.Request) {
 
 func getFinanceById(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	id := r.PathValue("Id")
 
 	finance := Finance{}
@@ -119,6 +103,8 @@ func getFinanceById(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateFinanceById(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	id := r.PathValue("Id")
 
@@ -147,6 +133,8 @@ func updateFinanceById(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteFinanceById(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	id := r.PathValue("Id")
 

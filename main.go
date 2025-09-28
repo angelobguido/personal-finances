@@ -40,7 +40,6 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /home", renderHome)
 	mux.HandleFunc("GET /{$}", healthCheck)
 	mux.HandleFunc("GET /finances/{Id}", getFinanceById)
 	mux.HandleFunc("PATCH /finances/{Id}", updateFinanceById)
