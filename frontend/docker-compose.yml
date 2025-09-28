@@ -1,0 +1,12 @@
+services:
+  vite-app:
+    build: .
+    container_name: vite-vue-dev
+    ports:
+      - "5173:5173"   # expõe a porta do Vite
+    volumes:
+      - .:/app        # monta o código local no container
+      - /app/node_modules # evita conflito do node_modules entre host e container
+    environment:
+      - NODE_ENV=development
+    command: npm run dev -- --host

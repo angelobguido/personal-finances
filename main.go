@@ -6,10 +6,9 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
-
-var dbConnectionString = getEnv("DB_CONNECTION_STRING", "postgres://postgres:localpassword@db:5432/postgres?sslmode=disable")
 
 var db *sql.DB
 
@@ -21,20 +20,27 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, relying on system environment variables.")
+	}
+
+	dbConnectionString := getEnv("DB_CONNECTION_STRING", "postgres://postgres:localpassword@db:5432/postgres?sslmode=disable")
+
 	var err error
 	db, err = sql.Open("postgres", dbConnectionString)
 	if err != nil {
-		log.Fatalf("FATAL: Error connecting to database: %v", err)
+		log.Fatalf("FATAL: Error connecting to database (%v): %v", dbConnectionString, err)
 	}
 	defer db.Close()
 
 	if err := db.Ping(); err != nil {
-		log.Fatalf("FATAL: Could not ping database: %v", err)
+		log.Fatalf("FATAL: Could not ping database (%v): %v", dbConnectionString, err)
 	}
 	log.Println("Successfully connected to the database.")
 
 	mux := http.NewServeMux()
 
+	mux.HandleFunc("GET /home", renderHome)
 	mux.HandleFunc("GET /{$}", healthCheck)
 	mux.HandleFunc("GET /finances/{Id}", getFinanceById)
 	mux.HandleFunc("PATCH /finances/{Id}", updateFinanceById)

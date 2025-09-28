@@ -23,6 +23,27 @@ type FinanceRequest struct {
 	Amount *float64 `json:"amount"`
 }
 
+func getFinancesList() ([]Finance, error) {
+	finances := []Finance{}
+
+	rows, err := db.Query("SELECT id, name, type, amount FROM finance")
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var finance Finance
+		if err := rows.Scan(&finance.Id, &finance.Name, &finance.Type, &finance.Amount); err != nil {
+			return nil, err
+		}
+		finances = append(finances, finance)
+	}
+
+	return finances, nil
+}
+
 func getFinances(w http.ResponseWriter, r *http.Request) {
 
 	finances := []Finance{}
