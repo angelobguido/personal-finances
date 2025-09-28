@@ -18,6 +18,20 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 
 	if err := godotenv.Load(); err != nil {
@@ -49,5 +63,5 @@ func main() {
 
 	fmt.Printf("Starting server at port 8090\n")
 
-	log.Fatal(http.ListenAndServe(":8090", mux))
+	log.Fatal(http.ListenAndServe(":8090", corsMiddleware(mux)))
 }

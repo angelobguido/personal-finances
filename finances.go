@@ -134,21 +134,24 @@ func updateFinanceById(w http.ResponseWriter, r *http.Request) {
 
 func deleteFinanceById(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-
 	id := r.PathValue("Id")
 
 	if err := db.QueryRow("DELETE FROM finance WHERE id=$1", id).Err(); err != nil {
 
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusNoContent)
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+
 			return
 		}
 
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
 		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 }
