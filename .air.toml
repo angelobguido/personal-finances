@@ -33,7 +33,6 @@ tmp_dir = "tmp"
   main = "magenta"
   runner = "green"
   watcher = "cyan"
-  exclude_dir = ["frontend"]
 
 [log]
   main_only = false
