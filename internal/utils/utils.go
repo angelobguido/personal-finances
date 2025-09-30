@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func encode[T any](w http.ResponseWriter, v *T, status int) error {
+func Encode[T any](w http.ResponseWriter, v *T, status int) error {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
@@ -19,7 +19,7 @@ func encode[T any](w http.ResponseWriter, v *T, status int) error {
 
 }
 
-func decode[T any](r *http.Request) (T, error) {
+func Decode[T any](r *http.Request) (T, error) {
 
 	var v T
 	if err := json.NewDecoder(r.Body).Decode(&v); err != nil {
@@ -29,7 +29,7 @@ func decode[T any](r *http.Request) (T, error) {
 
 }
 
-func getEnv(key, fallback string) string {
+func GetEnv(key, fallback string) string {
 	if value, ok := os.LookupEnv(key); ok {
 		return value
 	}
