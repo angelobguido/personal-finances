@@ -8,14 +8,14 @@ import (
 	"github.com/angelobguido/personal-finances/internal/types"
 )
 
-func RenderHome(w http.ResponseWriter, r *http.Request) {
+var Templates *template.Template
 
-	tmpl, _ := template.ParseFiles("./templates/index.html")
+func RenderHome(w http.ResponseWriter, r *http.Request) {
 
 	finances, _ := storage.GetFinances()
 
 	page := types.Page{Title: "Finances", Finances: finances}
 
-	tmpl.Execute(w, page)
+	Templates.ExecuteTemplate(w, "index", page)
 
 }

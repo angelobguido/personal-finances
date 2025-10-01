@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 
@@ -15,6 +16,8 @@ import (
 )
 
 func main() {
+
+	renderer.Templates = template.Must(template.ParseGlob("templates/*.html"))
 
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, relying on system environment variables.")
