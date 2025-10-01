@@ -37,13 +37,12 @@ func CreateFinance(w http.ResponseWriter, r *http.Request) {
 	amount, _ := strconv.ParseFloat(r.FormValue("amount"), 64)
 	category := r.FormValue("category")
 
-	_, err := storage.CreateFinance(name, amount, category)
+	finance, err := storage.CreateFinance(name, amount, category)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	finances, _ := storage.GetFinances()
-	Templates.ExecuteTemplate(w, "finances", map[string]types.Finances{"Finances": finances})
+	Templates.ExecuteTemplate(w, "finances", map[string]types.Finances{"Finances": []types.Finance{*finance}})
 }

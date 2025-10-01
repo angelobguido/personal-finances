@@ -37,7 +37,7 @@
             <th scope="col">Type</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="finances">
         {{template "finances" .}}
     </tbody>
 </table>
@@ -45,7 +45,7 @@
 
 {{block "finances" .}}
 {{range .Finances}}
-<tr id="finances">
+<tr>
     <td>{{.Id}}</td>
     <td>{{.Name}}</td>
     <td>{{.Amount}}</td>
@@ -61,18 +61,18 @@
 {{end}}
 
 {{block "form" .}}
-<form hx-swap="outerHTML" hx-target="#finances" hx-post="/render/finances">
+<form hx-swap="beforeend" hx-target="#finances" hx-post="/render/finances">
     <div class="form-group">
         <label>Name</label>
         <input type="text" class="form-control" placeholder="Enter name" name="name">
     </div>
     <div class="form-group">
         <label>Amount</label>
-        <input type="number" class="form-control" placeholder="Enter amount" amount="amount">
+        <input type="number" class="form-control" placeholder="Enter amount" name="amount">
     </div>
     <div class="form-group">
         <label>Type</label>
-        <input type="text" class="form-control" placeholder="Enter category" category="category">
+        <input type="text" class="form-control" placeholder="Enter category" name="category">
     </div>
     <button type="submit" class="btn btn-primary">Add</button>
 </form>
