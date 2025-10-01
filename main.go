@@ -47,6 +47,8 @@ func main() {
 	mux.HandleFunc("GET /finances", api.GetFinances)
 	mux.HandleFunc("POST /finances", api.CreateFinance)
 
+	mux.HandleFunc("POST /render/finances", renderer.CreateFinance)
+
 	fmt.Printf("Starting server at port 8090\n")
 
 	log.Fatal(http.ListenAndServe(":8090", mux))
