@@ -45,7 +45,7 @@
 
 {{block "finances" .}}
 {{range .Finances}}
-<tr>
+<tr id="finance_{{.Id}}">
     <td>{{.Id}}</td>
     <td>{{.Name}}</td>
     <td>{{.Amount}}</td>
@@ -54,7 +54,7 @@
         <button type="button" class="btn btn-primary">Edit</button>
     </td>
     <td>
-        <button type="button" class="btn btn-primary">Delete</button>
+        <button hx-trigger="click" hx-target="#finance_{{.Id}}" hx-swap="outerHTML" hx-delete="/finances/{{.Id}}" class="btn btn-danger">Delete</button>
     </td>
 </tr>
 {{end}}

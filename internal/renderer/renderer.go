@@ -23,16 +23,6 @@ func RenderHome(w http.ResponseWriter, r *http.Request) {
 
 func CreateFinance(w http.ResponseWriter, r *http.Request) {
 
-	// financeRequest := types.FinanceRequest{}
-	// financeRequest.Name = string([]byte(r.FormValue("name")))
-	// financeRequest.Amount, _ = strconv.ParseFloat(r.FormValue("amount"), 64)
-	// financeRequest.Category = r.FormValue("category")
-
-	// if financeRequest.Amount == nil || financeRequest.Name == nil || financeRequest.Category == nil {
-	// 	utils.Encode(w, &map[string]string{"error": "All fields are required!"}, http.StatusBadRequest)
-	// 	return
-	// }
-
 	name := r.FormValue("name")
 	amount, _ := strconv.ParseFloat(r.FormValue("amount"), 64)
 	category := r.FormValue("category")
