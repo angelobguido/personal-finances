@@ -54,7 +54,7 @@
 {{end}}
 
 {{block "finance-list-item" .}}
-<li class="list-group-item d-flex justify-content-between align-items-center" id="finance_{{.Id}}">
+<li class="list-group-item d-flex justify-content-between align-items-center">
     <div>
         <span class="fw-bold">{{.Name}}</span>
         <small class="text-muted d-block">{{.Category}}</small>
@@ -70,7 +70,7 @@
 {{end}}
 
 {{block "edit-finance-list-item" .}}
-<li class="list-group-item" id="finance_{{.Id}}">
+<li class="list-group-item">
     <div class="d-flex align-items-center">
         <input type="text" name="name" value="{{.Name}}" class="form-control me-2">
         <input type="text" name="category" value="{{.Category}}" class="form-control me-2" style="width: 150px;">
