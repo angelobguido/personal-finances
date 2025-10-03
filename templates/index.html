@@ -45,18 +45,7 @@
 
 {{block "finances" .}}
 {{range .Finances}}
-<tr id="finance_{{.Id}}">
-    <td>{{.Id}}</td>
-    <td>{{.Name}}</td>
-    <td>{{.Amount}}</td>
-    <td>{{.Category}}</td>
-    <td>
-        <button type="button" class="btn btn-primary">Edit</button>
-    </td>
-    <td>
-        <button hx-trigger="click" hx-target="#finance_{{.Id}}" hx-swap="outerHTML" hx-delete="/finances/{{.Id}}" class="btn btn-danger">Delete</button>
-    </td>
-</tr>
+    {{template "finance_row" .}}
 {{end}}
 {{end}}
 
@@ -76,4 +65,49 @@
     </div>
     <button type="submit" class="btn btn-primary">Add</button>
 </form>
+{{end}}
+
+{{block "finance_row" .}}
+<tr id="finance_{{.Id}}">
+    <td>{{.Id}}</td>
+    <td>{{.Name}}</td>
+    <td>{{.Amount}}</td>
+    <td>{{.Category}}</td>
+    <td>
+        <button hx-get="render/finances/edit/{{.Id}}" hx-target="closest tr" hx-swap="outerHTML" class="btn btn-primary btn-sm">
+            Edit
+        </button>
+    </td>
+    <td>
+        <button hx-delete="/finances/{{.Id}}" hx-target="closest tr" hx-swap="outerHTML" class="btn btn-danger btn-sm">Delete</button>
+    </td>
+</tr>
+{{end}}
+
+{{block "finance_row_edit" .}}
+<tr id="finance_{{.Id}}">
+    <td>{{.Id}}</td>
+    <td><input type="text" name="name" value="{{.Name}}" class="form-control"></td>
+    <td><input type="number" name="amount" value="{{.Amount}}" class="form-control"></td>
+    <td><input type="text" name="category" value="{{.Category}}" class="form-control"></td>
+    <td>
+        <button 
+            hx-patch="render/finances/{{.Id}}" 
+            hx-include="closest tr"
+            hx-target="closest tr"
+            hx-swap="outerHTML"
+            class="btn btn-success btn-sm">
+            Save
+        </button>
+    </td>
+    <td>
+         <button 
+            hx-get="render/finances/{{.Id}}"
+            hx-target="closest tr"
+            hx-swap="outerHTML"
+            class="btn btn-secondary btn-sm">
+            Cancel
+        </button>
+    </td>
+</tr>
 {{end}}

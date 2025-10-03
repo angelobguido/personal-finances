@@ -34,5 +34,47 @@ func CreateFinance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Templates.ExecuteTemplate(w, "finances", map[string]types.Finances{"Finances": []types.Finance{*finance}})
+	Templates.ExecuteTemplate(w, "finance_row", *finance)
+}
+
+func UpdateFinance(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("Id")
+	name := r.FormValue("name")
+	amount, _ := strconv.ParseFloat(r.FormValue("amount"), 64)
+	category := r.FormValue("category")
+
+	finance, err := storage.UpdateFinanceById(id, &name, &amount, &category)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	Templates.ExecuteTemplate(w, "finance_row", *finance)
+}
+
+func RenderEditFinance(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("Id")
+
+	finance, err := storage.GetFinanceById(id)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	Templates.ExecuteTemplate(w, "finance_row_edit", *finance)
+}
+
+func RenderFinance(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("Id")
+
+	finance, err := storage.GetFinanceById(id)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	Templates.ExecuteTemplate(w, "finance_row", *finance)
 }

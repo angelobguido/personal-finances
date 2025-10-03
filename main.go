@@ -39,7 +39,6 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /home", renderer.RenderHome)
 	mux.HandleFunc("GET /{$}", api.HealthCheck)
 	mux.HandleFunc("GET /finances/{Id}", api.GetFinanceById)
 	mux.HandleFunc("PATCH /finances/{Id}", api.UpdateFinanceById)
@@ -47,7 +46,11 @@ func main() {
 	mux.HandleFunc("GET /finances", api.GetFinances)
 	mux.HandleFunc("POST /finances", api.CreateFinance)
 
+	mux.HandleFunc("GET /home", renderer.RenderHome)
 	mux.HandleFunc("POST /render/finances", renderer.CreateFinance)
+	mux.HandleFunc("GET /render/finances/edit/{Id}", renderer.RenderEditFinance)
+	mux.HandleFunc("PATCH /render/finances/{Id}", renderer.UpdateFinance)
+	mux.HandleFunc("GET /render/finances/{Id}", renderer.RenderFinance)
 
 	fmt.Printf("Starting server at port 8090\n")
 
