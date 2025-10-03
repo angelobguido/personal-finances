@@ -34,7 +34,7 @@ func CreateFinance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Templates.ExecuteTemplate(w, "finance_row", *finance)
+	Templates.ExecuteTemplate(w, "finance-list-item", *finance)
 }
 
 func UpdateFinance(w http.ResponseWriter, r *http.Request) {
@@ -50,7 +50,7 @@ func UpdateFinance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Templates.ExecuteTemplate(w, "finance_row", *finance)
+	Templates.ExecuteTemplate(w, "finance-list-item", *finance)
 }
 
 func RenderEditFinance(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +63,7 @@ func RenderEditFinance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Templates.ExecuteTemplate(w, "finance_row_edit", *finance)
+	Templates.ExecuteTemplate(w, "edit-finance-list-item", *finance)
 }
 
 func RenderFinance(w http.ResponseWriter, r *http.Request) {
@@ -76,5 +76,5 @@ func RenderFinance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Templates.ExecuteTemplate(w, "finance_row", *finance)
+	Templates.ExecuteTemplate(w, "finance-list-item", *finance)
 }

@@ -16,7 +16,7 @@
         
         {{template "form" .}}
         <hr>
-        {{template "table" .}}
+        {{template "finances-list" .}}
         
         <footer class="pt-3 mt-4 text-muted border-top text-center">
             <p>&copy; 2025 My Website</p>
@@ -25,28 +25,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 </html>
-{{end}}
-
-{{block "table" .}}
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Name</th>
-            <th scope="col">Amount</th>
-            <th scope="col">Type</th>
-        </tr>
-    </thead>
-    <tbody id="finances">
-        {{template "finances" .}}
-    </tbody>
-</table>
-{{end}}
-
-{{block "finances" .}}
-{{range .Finances}}
-    {{template "finance_row" .}}
-{{end}}
 {{end}}
 
 {{block "form" .}}
@@ -67,47 +45,40 @@
 </form>
 {{end}}
 
-{{block "finance_row" .}}
-<tr id="finance_{{.Id}}">
-    <td>{{.Id}}</td>
-    <td>{{.Name}}</td>
-    <td>{{.Amount}}</td>
-    <td>{{.Category}}</td>
-    <td>
-        <button hx-get="render/finances/edit/{{.Id}}" hx-target="closest tr" hx-swap="outerHTML" class="btn btn-primary btn-sm">
-            Edit
-        </button>
-    </td>
-    <td>
-        <button hx-delete="/finances/{{.Id}}" hx-target="closest tr" hx-swap="outerHTML" class="btn btn-danger btn-sm">Delete</button>
-    </td>
-</tr>
+{{block "finances-list" .}}
+<ul class="list-group" id="finances">
+    {{range .Finances}}
+        {{template "finance-list-item" .}}
+    {{end}}
+</ul>
 {{end}}
 
-{{block "finance_row_edit" .}}
-<tr id="finance_{{.Id}}">
-    <td>{{.Id}}</td>
-    <td><input type="text" name="name" value="{{.Name}}" class="form-control"></td>
-    <td><input type="number" name="amount" value="{{.Amount}}" class="form-control"></td>
-    <td><input type="text" name="category" value="{{.Category}}" class="form-control"></td>
-    <td>
-        <button 
-            hx-patch="render/finances/{{.Id}}" 
-            hx-include="closest tr"
-            hx-target="closest tr"
-            hx-swap="outerHTML"
-            class="btn btn-success btn-sm">
-            Save
-        </button>
-    </td>
-    <td>
-         <button 
-            hx-get="render/finances/{{.Id}}"
-            hx-target="closest tr"
-            hx-swap="outerHTML"
-            class="btn btn-secondary btn-sm">
-            Cancel
-        </button>
-    </td>
-</tr>
+{{block "finance-list-item" .}}
+<li class="list-group-item d-flex justify-content-between align-items-center" id="finance_{{.Id}}">
+    <div>
+        <span class="fw-bold">{{.Name}}</span>
+        <small class="text-muted d-block">{{.Category}}</small>
+    </div>
+    <div class="d-flex align-items-center">
+        <span class="me-3">R$ {{.Amount}}</span>
+        <div>
+            <button hx-get="render/finances/edit/{{.Id}}" hx-target="closest li" hx-swap="outerHTML" class="btn btn-primary btn-sm">Edit</button>
+            <button hx-delete="/finances/{{.Id}}" hx-target="closest li" hx-swap="outerHTML" class="btn btn-danger btn-sm">Delete</button>
+        </div>
+    </div>
+</li>
+{{end}}
+
+{{block "edit-finance-list-item" .}}
+<li class="list-group-item" id="finance_{{.Id}}">
+    <div class="d-flex align-items-center">
+        <input type="text" name="name" value="{{.Name}}" class="form-control me-2">
+        <input type="text" name="category" value="{{.Category}}" class="form-control me-2" style="width: 150px;">
+        <input type="number" name="amount" value="{{.Amount}}" class="form-control me-3" style="width: 120px;">
+        <div>
+            <button hx-patch="render/finances/{{.Id}}" hx-include="closest li" hx-target="closest li" hx-swap="outerHTML" class="btn btn-success btn-sm">Save</button>
+            <button hx-get="render/finances/{{.Id}}" hx-target="closest li" hx-swap="outerHTML" class="btn btn-secondary btn-sm">Cancel</button>
+        </div>
+    </div>
+</li>
 {{end}}
