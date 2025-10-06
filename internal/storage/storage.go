@@ -11,7 +11,7 @@ var Db *sql.DB
 func GetFinances() ([]types.Finance, error) {
 	finances := []types.Finance{}
 
-	rows, err := Db.Query("SELECT id, name, type, amount FROM finance")
+	rows, err := Db.Query("SELECT id, name, category, amount FROM finance ORDER BY id")
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func CreateFinance(name string, amount float64, category string) (*types.Finance
 
 	var finance = types.Finance{}
 
-	if err := Db.QueryRow("INSERT INTO finance(name, amount, type) VALUES ($1, $2, $3) RETURNING id, name, type, amount", name, amount, category).Scan(&finance.Id, &finance.Name, &finance.Category, &finance.Amount); err != nil {
+	if err := Db.QueryRow("INSERT INTO finance(name, amount, category) VALUES ($1, $2, $3) RETURNING id, name, category, amount", name, amount, category).Scan(&finance.Id, &finance.Name, &finance.Category, &finance.Amount); err != nil {
 		return nil, err
 	}
 
@@ -48,7 +48,7 @@ func GetFinanceById(id string) (*types.Finance, error) {
 
 	finance := types.Finance{}
 
-	if err := Db.QueryRow("SELECT id, name, type, amount FROM finance WHERE id=$1", id).Scan(&finance.Id, &finance.Name, &finance.Category, &finance.Amount); err != nil {
+	if err := Db.QueryRow("SELECT id, name, category, amount FROM finance WHERE id=$1", id).Scan(&finance.Id, &finance.Name, &finance.Category, &finance.Amount); err != nil {
 		return nil, err
 	}
 
@@ -59,7 +59,7 @@ func UpdateFinanceById(id string, name *string, amount *float64, category *strin
 
 	finance := types.Finance{}
 
-	if err := Db.QueryRow("UPDATE finance SET name = COALESCE($1, name), type = COALESCE($2, type), amount = COALESCE($3, amount) WHERE id=$4 RETURNING id, name, type, amount", name, category, amount, id).Scan(&finance.Id, &finance.Name, &finance.Category, &finance.Amount); err != nil {
+	if err := Db.QueryRow("UPDATE finance SET name = COALESCE($1, name), category = COALESCE($2, category), amount = COALESCE($3, amount) WHERE id=$4 RETURNING id, name, category, amount", name, category, amount, id).Scan(&finance.Id, &finance.Name, &finance.Category, &finance.Amount); err != nil {
 		return nil, err
 	}
 

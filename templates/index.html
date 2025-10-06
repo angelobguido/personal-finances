@@ -35,11 +35,18 @@
     </div>
     <div class="form-group">
         <label>Amount</label>
-        <input type="number" class="form-control" placeholder="Enter amount" name="amount">
+        <input type="number" step="0.01" class="form-control" placeholder="Enter amount" name="amount">
     </div>
     <div class="form-group">
-        <label>Type</label>
-        <input type="text" class="form-control" placeholder="Enter category" name="category">
+        <label>Category</label>
+        <select name="category" class="form-select">
+            <option selected>Fixed Cost</option>
+            <option>Comfort</option>
+            <option>Goals</option>
+            <option>Pleasures</option>
+            <option>Financial Freedom</option>
+            <option>Knowledge</option>
+        </select>
     </div>
     <button type="submit" class="btn btn-primary">Add</button>
 </form>
@@ -73,8 +80,15 @@
 <li class="list-group-item">
     <div class="d-flex align-items-center">
         <input type="text" name="name" value="{{.Name}}" class="form-control me-2">
-        <input type="text" name="category" value="{{.Category}}" class="form-control me-2" style="width: 150px;">
-        <input type="number" name="amount" value="{{.Amount}}" class="form-control me-3" style="width: 120px;">
+        <select name="category" class="form-select">
+            <option {{if eq .Category "Fixed Cost"}} selected {{end}} >Fixed Cost</option>
+            <option {{if eq .Category "Comfort"}} selected {{end}} >Comfort</option>
+            <option {{if eq .Category "Goals"}} selected {{end}} >Goals</option>
+            <option {{if eq .Category "Pleasures"}} selected {{end}} >Pleasures</option>
+            <option {{if eq .Category "Financial Freedom"}} selected {{end}} >Financial Freedom</option>
+            <option {{if eq .Category "Knowledge"}} selected {{end}} >Knowledge</option>
+        </select>
+        <input type="number" step="0.01" name="amount" value="{{.Amount}}" class="form-control me-3">
         <div>
             <button hx-patch="render/finances/{{.Id}}" hx-include="closest li" hx-target="closest li" hx-swap="outerHTML" class="btn btn-success btn-sm">Save</button>
             <button hx-get="render/finances/{{.Id}}" hx-target="closest li" hx-swap="outerHTML" class="btn btn-secondary btn-sm">Cancel</button>
