@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/angelobguido/personal-finances/internal/storage"
 	"github.com/angelobguido/personal-finances/internal/types"
@@ -39,11 +40,17 @@ func CreateFinance(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if financeRequest.Amount == nil || financeRequest.Name == nil || financeRequest.Category == nil {
-		utils.Encode(w, &map[string]string{"error": "All fields are required!"}, http.StatusBadRequest)
+		utils.Encode(w, &map[string]string{"error": "Amount, Name and Category are required fields!"}, http.StatusBadRequest)
 		return
 	}
 
-	finance, err := storage.CreateFinance(*financeRequest.Name, *financeRequest.Amount, *financeRequest.Category)
+	createdAt := time.Time{}
+
+	if financeRequest.CreatedAt != nil {
+		createdAt = *financeRequest.CreatedAt
+	}
+
+	finance, err := storage.CreateFinance(*financeRequest.Name, *financeRequest.Amount, *financeRequest.Category, createdAt)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -84,7 +91,7 @@ func UpdateFinanceById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	finance, err := storage.UpdateFinanceById(id, financeRequest.Name, financeRequest.Amount, financeRequest.Category)
+	finance, err := storage.UpdateFinanceById(id, financeRequest.Name, financeRequest.Amount, financeRequest.Category, financeRequest.CreatedAt)
 
 	if err != nil {
 
