@@ -1,60 +1,65 @@
 {{block "index" .}}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Index Page</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js" integrity="sha384-ZBXiYtYQ6hJ2Y0ZNoYuI+Nq5MqWBr+chMrS/RkXpNzQCApHEhOt2aY8EJgqwHLkJ" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js"
+        integrity="sha384-ZBXiYtYQ6hJ2Y0ZNoYuI+Nq5MqWBr+chMrS/RkXpNzQCApHEhOt2aY8EJgqwHLkJ"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="static/css/style.css">
 </head>
+
 <body>
     <header>
         <h1>{{.Title}}</h1>
     </header>
-    
-    {{template "form" .}}
-    <hr>
-    {{template "finances-list" .}}
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <aside> Aside </aside>
+    <main>
+        {{template "form" .}}
+        <hr>
+        {{template "finances-list" .}}
+    </main>
+    <footer> Footer </footer>
 </body>
+
 </html>
 {{end}}
 
 {{block "form" .}}
-<form hx-swap="beforeend" hx-target="#finances" hx-post="/render/finances">
-    <div>
-        <label>Name</label>
-        <input type="text" placeholder="Enter name" name="name">
-    </div>
-    <div>
-        <label>Amount</label>
-        <input type="number" step="0.01" placeholder="Enter amount" name="amount">
-    </div>
-    <div>
-        <label>Category</label>
-        <select name="category">
-            <option selected>Fixed Cost</option>
-            <option>Comfort</option>
-            <option>Goals</option>
-            <option>Pleasures</option>
-            <option>Financial Freedom</option>
-            <option>Knowledge</option>
-        </select>
-    </div>
-    <div>
-        <label>Created At</label>
-        <input type="datetime-local" name="created_at">
-    </div>
-    <button type="submit">Add</button>
-</form>
+<div>
+    <form hx-swap="beforeend" hx-target="#finances" hx-post="/render/finances">
+        <div>
+            <input type="text" placeholder="Name" name="name" required>
+        </div>
+        <div>
+            <input type="number" step="0.01" placeholder="Amount" name="amount" required>
+        </div>
+        <div>
+            <select name="category" required>
+                <option selected>Fixed Cost</option>
+                <option>Comfort</option>
+                <option>Goals</option>
+                <option>Pleasures</option>
+                <option>Financial Freedom</option>
+                <option>Knowledge</option>
+            </select>
+        </div>
+        <div>
+            <label>Created At</label>
+            <input type="datetime-local" name="created_at" required>
+        </div>
+        <button type="submit">Add</button>
+    </form>
+</div>
 {{end}}
 
 {{block "finances-list" .}}
 <ul class="list-group" id="finances">
     {{range .Finances}}
-        {{template "finance-list-item" .}}
+    {{template "finance-list-item" .}}
     {{end}}
 </ul>
 {{end}}
@@ -80,17 +85,18 @@
         <input type="text" name="name" value="{{.Name}}">
         <input type="number" step="0.01" name="amount" value="{{.Amount}}">
         <select name="category">
-            <option {{if eq .Category "Fixed Cost"}} selected {{end}} >Fixed Cost</option>
-            <option {{if eq .Category "Comfort"}} selected {{end}} >Comfort</option>
-            <option {{if eq .Category "Goals"}} selected {{end}} >Goals</option>
-            <option {{if eq .Category "Pleasures"}} selected {{end}} >Pleasures</option>
-            <option {{if eq .Category "Financial Freedom"}} selected {{end}} >Financial Freedom</option>
-            <option {{if eq .Category "Knowledge"}} selected {{end}} >Knowledge</option>
+            <option {{if eq .Category "Fixed Cost" }} selected {{end}}>Fixed Cost</option>
+            <option {{if eq .Category "Comfort" }} selected {{end}}>Comfort</option>
+            <option {{if eq .Category "Goals" }} selected {{end}}>Goals</option>
+            <option {{if eq .Category "Pleasures" }} selected {{end}}>Pleasures</option>
+            <option {{if eq .Category "Financial Freedom" }} selected {{end}}>Financial Freedom</option>
+            <option {{if eq .Category "Knowledge" }} selected {{end}}>Knowledge</option>
         </select>
         <input type="datetime-local" name="created_at" value="{{.CreatedAt}}">
     </div>
     <div>
-        <button hx-patch="render/finances/{{.Id}}" hx-include="closest li" hx-target="closest li" hx-swap="outerHTML">Save</button>
+        <button hx-patch="render/finances/{{.Id}}" hx-include="closest li" hx-target="closest li"
+            hx-swap="outerHTML">Save</button>
         <button hx-get="render/finances/{{.Id}}" hx-target="closest li" hx-swap="outerHTML">Cancel</button>
     </div>
 </li>

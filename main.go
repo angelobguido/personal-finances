@@ -17,6 +17,8 @@ import (
 
 func main() {
 
+	fs := http.FileServer(http.Dir("static"))
+
 	renderer.Templates = template.Must(template.ParseGlob("templates/*.html"))
 
 	if err := godotenv.Load(); err != nil {
@@ -51,6 +53,8 @@ func main() {
 	mux.HandleFunc("GET /render/finances/edit/{Id}", renderer.RenderEditFinance)
 	mux.HandleFunc("PATCH /render/finances/{Id}", renderer.UpdateFinance)
 	mux.HandleFunc("GET /render/finances/{Id}", renderer.RenderFinance)
+
+	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	fmt.Printf("Starting server at port 8090\n")
 
