@@ -19,7 +19,7 @@ func RenderHome(w http.ResponseWriter, r *http.Request) {
 
 	page := types.Page{Title: "Finances", Finances: finances}
 
-	Templates.ExecuteTemplate(w, "index", page)
+	Templates.ExecuteTemplate(w, "finances.html", page)
 
 }
 
