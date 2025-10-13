@@ -1,7 +1,35 @@
+{{block "index" .}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index Page</title>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js"
+        integrity="sha384-ZBXiYtYQ6hJ2Y0ZNoYuI+Nq5MqWBr+chMrS/RkXpNzQCApHEhOt2aY8EJgqwHLkJ"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+
+<body>
+    <header>
+        <h1>{{.Title}}</h1>
+    </header>
+    <aside> Aside </aside>
+    <main>
+        {{template "form" .}}
+        <hr>
+        {{template "finances-list" .}}
+    </main>
+    <footer> Footer </footer>
+</body>
+
+</html>
+{{end}}
 
 {{block "form" .}}
 <div>
-    <h1>{{.Title}}</h1>
     <form hx-swap="beforeend" hx-target="#finances" hx-post="/render/finances">
         <div>
             <input type="text" placeholder="Name" name="name" required>
