@@ -49,6 +49,7 @@ func main() {
 	mux.HandleFunc("POST /finances", api.CreateFinance)
 
 	mux.HandleFunc("GET /home", renderer.RenderHome)
+	mux.HandleFunc("GET /report", renderer.RenderReport)
 	mux.HandleFunc("POST /render/finances", renderer.CreateFinance)
 	mux.HandleFunc("GET /render/finances/edit/{Id}", renderer.RenderEditFinance)
 	mux.HandleFunc("PATCH /render/finances/{Id}", renderer.UpdateFinance)

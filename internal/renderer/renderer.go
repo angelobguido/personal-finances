@@ -17,7 +17,15 @@ func RenderHome(w http.ResponseWriter, r *http.Request) {
 
 	finances, _ := storage.GetFinances()
 
-	page := types.Page{Title: "Finances", Finances: finances}
+	page := types.Page{Title: "Finances", Finances: finances, Type: "finances"}
+
+	Templates.ExecuteTemplate(w, "index", page)
+
+}
+
+func RenderReport(w http.ResponseWriter, r *http.Request) {
+
+	page := types.Page{Title: "Finances", Type: "report"}
 
 	Templates.ExecuteTemplate(w, "index", page)
 

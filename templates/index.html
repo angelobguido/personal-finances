@@ -16,13 +16,18 @@
     <header>
         <h1>{{.Title}}</h1>
     </header>
-    <aside> Aside </aside>
+
     <main>
-        {{template "form" .}}
-        <hr>
-        {{template "finances-list" .}}
+        {{if eq .Type "finances" }}
+            {{template "form" .}}
+            {{template "finances-list" .}}
+        {{end}}
+        {{if eq .Type "report" }}
+            <h2>Report Page</h2>
+            <p>This is the report page content.</p>
+        {{end}}
     </main>
-    <footer> Footer </footer>
+    
 </body>
 
 </html>
