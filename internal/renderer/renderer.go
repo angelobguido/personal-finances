@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/angelobguido/personal-finances/internal/storage"
-	"github.com/angelobguido/personal-finances/internal/types"
 	"github.com/angelobguido/personal-finances/internal/utils"
 )
 
@@ -17,7 +16,7 @@ func RenderHome(w http.ResponseWriter, r *http.Request) {
 
 	finances, _ := storage.GetFinances()
 
-	page := types.Page{Title: "Finances", Finances: finances, Type: "finances"}
+	page := map[string]any{"Title": "Finances", "Finances": finances, "Type": "finances"}
 
 	Templates.ExecuteTemplate(w, "index", page)
 
@@ -25,7 +24,16 @@ func RenderHome(w http.ResponseWriter, r *http.Request) {
 
 func RenderReport(w http.ResponseWriter, r *http.Request) {
 
-	page := types.Page{Title: "Finances", Type: "report"}
+	categories := []map[string]any{
+		{"Name": "Fixed Cost", "Total": 1200.00},
+		{"Name": "Goals", "Total": 300.00},
+		{"Name": "Comfort", "Total": 150.00},
+		{"Name": "Pleasures", "Total": 200.00},
+		{"Name": "Financial Freedom", "Total": 100.00},
+		{"Name": "Knowledge", "Total": 50.00},
+	}
+
+	page := map[string]any{"Title": "Finances", "Categories": categories, "Type": "report"}
 
 	Templates.ExecuteTemplate(w, "index", page)
 

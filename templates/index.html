@@ -19,18 +19,38 @@
 
     <main>
         {{if eq .Type "finances" }}
-            {{template "form" .}}
-            {{template "finances-list" .}}
+            {{template "finances" .}}
         {{end}}
         {{if eq .Type "report" }}
-            <h2>Report Page</h2>
-            <p>This is the report page content.</p>
+            {{template "report" .}}
         {{end}}
     </main>
     
 </body>
 
 </html>
+{{end}}
+
+{{block "finances" .}}
+    {{template "form" .}}
+    {{template "finances-list" .}}
+{{end}}
+
+{{block "report" .}}
+    <div>
+        <div>Summary</div>
+        <div>
+            <select name="Month">
+                <option>10/2025</option>
+            </select>
+        </div>
+        <div>
+            {{range .Categories}}
+                <div>{{.Name}}</div>
+                <div>R$ {{.Total}}</div>
+            {{end}}
+        </div>
+    </div>
 {{end}}
 
 {{block "form" .}}
