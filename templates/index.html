@@ -46,7 +46,7 @@
         </div>
         <div>
             {{range .Categories}}
-                <div>{{.Name}}</div>
+                <div>{{.Category}}</div>
                 <div>R$ {{.Total}}</div>
             {{end}}
         </div>
@@ -70,6 +70,7 @@
                 <option>Pleasures</option>
                 <option>Financial Freedom</option>
                 <option>Knowledge</option>
+                <option>Income</option>
             </select>
         </div>
         <div>
@@ -116,6 +117,7 @@
             <option {{if eq .Category "Pleasures" }} selected {{end}}>Pleasures</option>
             <option {{if eq .Category "Financial Freedom" }} selected {{end}}>Financial Freedom</option>
             <option {{if eq .Category "Knowledge" }} selected {{end}}>Knowledge</option>
+            <option {{if eq .Category "Income" }} selected {{end}}>Income</option>
         </select>
         <input type="datetime-local" name="created_at" value="{{.CreatedAt}}">
     </div>

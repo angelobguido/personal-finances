@@ -18,3 +18,8 @@ type FinanceRequest struct {
 	Amount    *float64   `json:"amount"`
 	CreatedAt *time.Time `json:"created_at"`
 }
+
+type CategorySummary struct {
+	Category string  `json:"category"`
+	Total    float64 `json:"total"`
+}

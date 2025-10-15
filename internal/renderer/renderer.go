@@ -24,16 +24,13 @@ func RenderHome(w http.ResponseWriter, r *http.Request) {
 
 func RenderReport(w http.ResponseWriter, r *http.Request) {
 
-	categories := []map[string]any{
-		{"Name": "Fixed Cost", "Total": 1200.00},
-		{"Name": "Goals", "Total": 300.00},
-		{"Name": "Comfort", "Total": 150.00},
-		{"Name": "Pleasures", "Total": 200.00},
-		{"Name": "Financial Freedom", "Total": 100.00},
-		{"Name": "Knowledge", "Total": 50.00},
+	categoriesReport, err := storage.GetCategoriesReport()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
-	page := map[string]any{"Title": "Finances", "Categories": categories, "Type": "report"}
+	page := map[string]any{"Title": "Finances", "Categories": categoriesReport, "Type": "report"}
 
 	Templates.ExecuteTemplate(w, "index", page)
 

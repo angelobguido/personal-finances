@@ -79,3 +79,28 @@ func DeleteFinanceById(id string) error {
 	return nil
 
 }
+
+func GetCategoriesReport() ([]types.CategorySummary, error) {
+	categories := []types.CategorySummary{}
+
+	rows, err := Db.Query("SELECT SUM(amount), category as total FROM finance GROUP BY category")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var total float64
+		var category string
+		if err := rows.Scan(&total, &category); err != nil {
+			return nil, err
+		}
+		categories = append(categories, types.CategorySummary{Category: category, Total: total})
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return categories, nil
+}
