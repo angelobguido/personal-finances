@@ -38,18 +38,24 @@
 
 {{block "report" .}}
     <div>
-        <div>Summary</div>
         <div>
             <select name="Month">
                 <option>10/2025</option>
             </select>
         </div>
         <div>
-            {{range .Categories}}
+            {{range .Report.ExpensesSummary}}
                 <div>{{.Category}}</div>
-                <div>R$ {{.Total}}</div>
+                <div>Total: R$ {{.Total}}</div>
+                <div>Expense Ratio: {{.ExpenseRatio}}</div>
             {{end}}
         </div>
+        <div>
+            <p>Total Income: R$ {{.Report.TotalIncome}}</p>
+            <p>Total Expense: R$ {{.Report.TotalExpense}}</p>
+            <p>Net Total: R$ {{.Report.NetTotal}}</p>
+        </div>
+
     </div>
 {{end}}
 

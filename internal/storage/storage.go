@@ -80,10 +80,10 @@ func DeleteFinanceById(id string) error {
 
 }
 
-func GetCategoriesReport() ([]types.CategorySummary, error) {
-	categories := []types.CategorySummary{}
+func GetReport() (*types.Report, error) {
+	categories := []types.CategoryTotal{}
 
-	rows, err := Db.Query("SELECT SUM(amount), category as total FROM finance GROUP BY category")
+	rows, err := Db.Query("SELECT SUM(amount) as total, category FROM finance GROUP BY category")
 	if err != nil {
 		return nil, err
 	}
@@ -95,12 +95,39 @@ func GetCategoriesReport() ([]types.CategorySummary, error) {
 		if err := rows.Scan(&total, &category); err != nil {
 			return nil, err
 		}
-		categories = append(categories, types.CategorySummary{Category: category, Total: total})
+		categories = append(categories, types.CategoryTotal{Category: category, Total: total})
 	}
 
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
 
-	return categories, nil
+	report := types.Report{}
+
+	hasIncome := false
+	for _, category := range categories {
+		if category.Category == "Income" {
+			hasIncome = true
+			report.TotalIncome = category.Total
+		}
+	}
+
+	if !hasIncome {
+		return &report, nil
+	}
+
+	for _, category := range categories {
+		if category.Category != "Income" {
+			expenseSummary := types.ExpenseSummary{}
+			expenseSummary.ExpenseRatio = category.Total / report.TotalIncome
+			expenseSummary.Total = category.Total
+			expenseSummary.Category = category.Category
+			report.ExpensesSummary = append(report.ExpensesSummary, expenseSummary)
+			report.TotalExpense += category.Total
+		}
+	}
+
+	report.NetTotal = report.TotalIncome - report.TotalExpense
+
+	return &report, nil
 }
