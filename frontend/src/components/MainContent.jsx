@@ -3,7 +3,7 @@ import Transactions from './TransactionsView.jsx'
 function MainContent() {
 
   return (
-    <main>
+    <main className="p-8">
         <Transactions />
     </main>
   )
