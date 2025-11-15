@@ -1,4 +1,4 @@
-import Transactions from './Transactions.jsx'
+import Transactions from './TransactionsView.jsx'
 
 function MainContent() {
 

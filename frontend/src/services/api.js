@@ -1,4 +1,4 @@
-async function createFinance(data) {
+async function createTransaction(data) {
     try {
         const response = await fetch('/finances', {
             method: 'POST',
@@ -14,12 +14,12 @@ async function createFinance(data) {
         
         return (await response.json()).data;
     } catch (error) {
-        console.error('Error creating finance:', error);
+        console.error('Error creating transaction:', error);
         throw error;
     }
 }
 
-async function updateFinance(id, data) {
+async function updateTransaction(id, data) {
     try {
         const response = await fetch(`/finances/${id}`, {
             method: 'PATCH',
@@ -35,12 +35,12 @@ async function updateFinance(id, data) {
         
         return (await response.json()).data;
     } catch (error) {
-        console.error('Error updating finance:', error);
+        console.error('Error updating transaction:', error);
         throw error;
     }
 }
 
-async function getFinances() {
+async function getTransactions() {
     try {
         const response = await fetch('/finances');
         
@@ -50,12 +50,12 @@ async function getFinances() {
         
         return (await response.json()).data;
     } catch (error) {
-        console.error('Error fetching finances:', error);
+        console.error('Error fetching transactions:', error);
         throw error;
     }
 }
 
-async function getFinance(id) {
+async function getTransaction(id) {
     try {
         const response = await fetch(`/finances/${id}`);
         
@@ -65,12 +65,12 @@ async function getFinance(id) {
         
         return (await response.json()).data;
     } catch (error) {
-        console.error('Error fetching finance:', error);
+        console.error('Error fetching transaction:', error);
         throw error;
     }
 }
 
-async function deleteFinance(id) {
+async function deleteTransaction(id) {
     try {
         const response = await fetch(`/finances/${id}`, {
             method: 'DELETE'
@@ -82,15 +82,15 @@ async function deleteFinance(id) {
         
         return (await response.json()).data;
     } catch (error) {
-        console.error('Error deleting finance:', error);
+        console.error('Error deleting transaction:', error);
         throw error;
     }
 }
 
 export {
-    createFinance,
-    updateFinance,
-    getFinances,
-    getFinance,
-    deleteFinance
+    createTransaction,
+    updateTransaction,
+    getTransactions,
+    getTransaction,
+    deleteTransaction
 };
