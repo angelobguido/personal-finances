@@ -4,7 +4,7 @@ function TransactionView() {
   
   return (
     <>
-      <h2>Transactions</h2>
+      <h2 className="text-2xl font-bold mb-4">Transactions</h2>
       <TransactionList />
     </>
   )
