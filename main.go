@@ -18,6 +18,7 @@ import (
 func main() {
 
 	fs := http.FileServer(http.Dir("static"))
+	front := http.FileServer(http.Dir("frontend/dist"))
 
 	renderer.Templates = template.Must(template.ParseGlob("templates/*.html"))
 
@@ -41,7 +42,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /{$}", api.HealthCheck)
+	//mux.HandleFunc("GET /{$}", api.HealthCheck)
 	mux.HandleFunc("GET /finances/{Id}", api.GetFinanceById)
 	mux.HandleFunc("PATCH /finances/{Id}", api.UpdateFinanceById)
 	mux.HandleFunc("DELETE /finances/{Id}", api.DeleteFinanceById)
@@ -56,6 +57,7 @@ func main() {
 	mux.HandleFunc("GET /render/finances/{Id}", renderer.RenderFinance)
 
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
+	mux.Handle("/", front)
 
 	fmt.Printf("Starting server at port 8090\n")
 
