@@ -1,7 +1,7 @@
 function Transaction({ transactionData }) {
     
     return (
-        <div className="p-4 border rounded shadow flex flex-col gap-2 flex-none w-48 ">
+        <div className="p-4 border rounded shadow flex flex-row gap-2 flex-none justify-between">
             <span className="font-semibold">{transactionData.name}</span>
             <span className="text-green-600">R$ {transactionData.amount.toFixed(2)}</span>
             <span className="text-gray-600">{transactionData.category}</span>

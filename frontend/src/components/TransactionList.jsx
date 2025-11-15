@@ -33,7 +33,7 @@ function TransactionList() {
 
   return (
     <>
-      <div className="flex flex-row gap-4 flex-wrap">
+      <div className="flex flex-col gap-4 flex-wrap">
         {transactions.length === 0 ? (
           <p>No transactions found</p>
         ) : (
