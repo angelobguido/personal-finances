@@ -1,50 +1,13 @@
-import { useEffect, useState } from 'react';
-import { getTransactions } from '../services/api.js';
-import Transaction from './Transaction.jsx';
+import TransactionList from './TransactionList.jsx';
 
-function TransactionsView() {
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(async () => {
-    setLoading(true);
-
-    try {
-      const response = await getTransactions();
-      setTransactions(response);
-    }
-    catch (err) {
-      setError(true);
-    }
-    finally {
-      setLoading(false);
-    }
-
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Something went wrong.</div>;
-  }
-
+function TransactionView() {
+  
   return (
     <>
       <h2>Transactions</h2>
-      <div>
-        {transactions.length === 0 ? (
-          <p>No transactions found</p>
-        ) : (
-          transactions.map((transaction) => (
-            <Transaction key={transaction.id} transactionData={transaction} />
-          ))
-        )}
-      </div>
+      <TransactionList />
     </>
   )
 }
 
-export default TransactionsView;
+export default TransactionView;
