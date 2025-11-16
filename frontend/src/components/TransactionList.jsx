@@ -1,28 +1,9 @@
-import { useEffect, useState } from 'react';
-import { getTransactions } from '../services/api.js';
 import Transaction from './Transaction.jsx';
+import { useFinanceStore } from '../store/useFinanceStore.js';
 
 function TransactionList() {
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(async () => {
-    setLoading(true);
-
-    try {
-      const response = await getTransactions();
-      setTransactions(response);
-    }
-    catch (err) {
-      setError(true);
-    }
-    finally {
-      setLoading(false);
-    }
-
-  }, []);
-
+  const {transactions, loading, error} = useFinanceStore();
+  
   if (loading) {
     return <div>Loading...</div>;
   }
