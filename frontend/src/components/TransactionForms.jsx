@@ -1,4 +1,4 @@
-function Forms() {
+function TransactionForms() {
 
     const handleAdd = async (event) => {
         event.preventDefault();
@@ -34,15 +34,18 @@ function Forms() {
     };
 
     return (
-        <>
-            <form>
-                <div>
-                    <input type="text" placeholder="Name" name="name" required /> 
+        <div className="p-4 flex flex-col flex-none items-center">
+            <form className="p-4 border rounded shadow flex flex-col w-max">
+                <div className="flex flex-row">
+                    <p>Name:</p>
+                    <input type="text" name="name" required /> 
                 </div>
-                <div>
-                    <input type="number" step="0.01" placeholder="Amount" name="amount" required />
+                <div className="flex flex-row">
+                    <p>Amount:</p>
+                    <input type="number" step="0.01" name="amount" required />
                 </div>
-                <div>
+                <div className="flex flex-row">
+                    <p>Category:</p>
                     <select name="category" required>
                         <option selected>Fixed Cost</option>
                         <option>Comfort</option>
@@ -54,13 +57,13 @@ function Forms() {
                     </select>
                 </div>
                 <div>
-                    <label>Created At</label>
+                    <p>Created At:</p>
                     <input type="date" name="created_at" required />
                 </div>
                 <button type="button" onClick={handleAdd}>Add</button>
             </form>
-        </>
+        </div>
     );
 }
 
-export default Forms;
+export default TransactionForms;
