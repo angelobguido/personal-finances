@@ -17,6 +17,30 @@ const useFinanceStore = create((set, get) => ({
     set({ loading: false });
   },
 
+  async addTransaction(data) {
+    set({ loading: true, error: false });
+    try{
+      const response = await fetch('/finances', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+      });
+      if (!response.ok) {
+          throw new Error('Failed to add finance', response.statusText);
+      }
+    } 
+    catch {
+      set({ error: true });
+    } 
+    finally {
+      set({ loading: false });
+    }
+
+    await get().loadAllData();
+  },
+
 }));
 
 export {useFinanceStore};

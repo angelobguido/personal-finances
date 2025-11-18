@@ -1,53 +1,41 @@
-function TransactionForms() {
+import { useState } from "react";
 
-    const handleAdd = async (event) => {
-        event.preventDefault();
-        const formData = new FormData(event.target.form);
-        const data = {
-            name: formData.get('name'),
-            amount: parseFloat(formData.get('amount')),
-            category: formData.get('category'),
-            created_at: new Date(formData.get('created_at')).toISOString()
-        };
+function TransactionForms({onAdd, onCancel}) {
 
-        console.log('Submitting data:', data);
+    const [name, setName] = useState('Nova Transação');
+    const [amount, setAmount] = useState('100.00');
+    const [category, setCategory] = useState('Fixed Cost');
+    const [createdAt, setCreatedAt] = useState(new Date().toISOString().split('T')[0]);
 
-        try {
-            const response = await fetch('/finances', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-            });
-
-            if (!response.ok) {
-            throw new Error('Failed to add finance', response.statusText);
-            }
-
-            const result = await response.json();
-            console.log('Success:', result);
-            event.target.form.reset();
-        } catch (error) {
-            console.error('Error:', error);
-        }
+    const handleAdd = () => {
+        onAdd({
+            name: name,
+            amount: parseFloat(amount),
+            category: category,
+            createdAt: new Date(createdAt).toISOString()
+        });
     };
 
+    const handleOnNameChange = (e) => setName(e.target.value);
+    const handleOnAmountChange = (e) => setAmount(e.target.value);
+    const handleOnCategoryChange = (e) => setCategory(e.target.value);
+    const handleOnCreatedAtChange = (e) => setCreatedAt(e.target.value);
+
     return (
-        <div className="p-4 flex flex-col flex-none items-center">
-            <form className="p-4 border rounded shadow flex flex-col w-max">
-                <div className="flex flex-row">
+        <form className="bg-blue-500 text-white rounded shadow flex flex-col flex-none items-center p-4">
+            <div className="flex flex-row flex-wrap gap-5 p-2">
+                <div className="flex flex-row gap-2">
                     <p>Name:</p>
-                    <input type="text" name="name" required /> 
+                    <input value={name} onChange={handleOnNameChange} className="bg-blue-400" type="text" name="name" placeholder="Enter Name" required /> 
                 </div>
-                <div className="flex flex-row">
+                <div className="flex flex-row gap-2">
                     <p>Amount:</p>
-                    <input type="number" step="0.01" name="amount" required />
+                    <input value={amount} onChange={handleOnAmountChange} className="bg-blue-400" type="number" step="0.01" name="amount" placeholder="Enter Amount" required />
                 </div>
-                <div className="flex flex-row">
+                <div className="flex flex-row gap-2">
                     <p>Category:</p>
-                    <select name="category" required>
-                        <option selected>Fixed Cost</option>
+                    <select value={category} onChange={handleOnCategoryChange} className="bg-blue-400" name="category" required>
+                        <option>Fixed Cost</option>
                         <option>Comfort</option>
                         <option>Goals</option>
                         <option>Pleasures</option>
@@ -56,13 +44,16 @@ function TransactionForms() {
                         <option>Income</option>
                     </select>
                 </div>
-                <div>
+                <div className="flex flex-row gap-2">
                     <p>Created At:</p>
-                    <input type="date" name="created_at" required />
+                    <input value={createdAt} onChange={handleOnCreatedAtChange} className="bg-blue-400" type="date" name="created_at" required />
                 </div>
-                <button type="button" onClick={handleAdd}>Add</button>
-            </form>
-        </div>
+            </div>
+            <div className="p-2 flex flex-row justify-center gap-2">
+                <button className="bg-blue-800 cursor-pointer hover:opacity-80 rounded shadow p-2" type="button" onClick={handleAdd}>Add</button>
+                <button className="bg-gray-600 cursor-pointer hover:opacity-80 rounded shadow p-2" type="button" onClick={onCancel}>Cancel</button>
+            </div>
+        </form>
     );
 }
 
