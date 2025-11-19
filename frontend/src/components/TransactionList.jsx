@@ -4,10 +4,18 @@ import { useFinanceStore } from '../store/useFinanceStore.js';
 import { useState } from 'react';
 
 function TransactionList() {
-  const {transactions, loading, error, addTransaction} = useFinanceStore();
+  const {transactions, loading, error, addTransaction, updateTransaction, deleteTransaction} = useFinanceStore();
 
   const [isAdding, setIsAdding] = useState(false);
   
+  const handleUpdate = async (id, payload) => {
+    await updateTransaction(id, payload);
+  };
+
+  const handleDelete = async (id) => {
+    await deleteTransaction(id);
+  };
+
   const handleClick = () => {
     setIsAdding(true);
   };
@@ -53,7 +61,7 @@ function TransactionList() {
           <p>No transactions found</p>
         ) : (
           transactions.map((transaction) => (
-            <Transaction key={transaction.id} transactionData={transaction} />
+            <Transaction key={transaction.id} transactionData={transaction} onDelete={handleDelete} />
           ))
         )}
       </div>

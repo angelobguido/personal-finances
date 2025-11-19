@@ -5,7 +5,7 @@ function TransactionForms({onAdd, onCancel}) {
     const [name, setName] = useState('Nova Transação');
     const [amount, setAmount] = useState('100.00');
     const [category, setCategory] = useState('Fixed Cost');
-    const [createdAt, setCreatedAt] = useState(new Date().toISOString().split('T')[0]);
+    const [createdAt, setCreatedAt] = useState(new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().split('T')[0]);
 
     const handleAdd = () => {
         onAdd({

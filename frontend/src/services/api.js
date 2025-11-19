@@ -79,8 +79,6 @@ async function deleteTransaction(id) {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
-        return (await response.json()).data;
     } catch (error) {
         console.error('Error deleting transaction:', error);
         throw error;

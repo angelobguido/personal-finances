@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getTransactions } from '../services/api';
+import { getTransactions, createTransaction, updateTransaction, deleteTransaction } from '../services/api';
 
 const useFinanceStore = create((set, get) => ({
   loading: true,
@@ -9,27 +9,23 @@ const useFinanceStore = create((set, get) => ({
   async loadAllData() {
     set({ loading: true, error: false });
     try{
-        const transactions = await getTransactions();
-        set({ transactions });
-    } catch {
-        set({ error: true });
+      const transactions = await getTransactions();
+      set({ transactions });
+    } 
+    catch {
+      set({ error: true });
     }
-    set({ loading: false });
+    finally {
+      set({ loading: false });
+    }
+    
   },
 
   async addTransaction(data) {
     set({ loading: true, error: false });
     try{
-      const response = await fetch('/finances', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data)
-      });
-      if (!response.ok) {
-          throw new Error('Failed to add finance', response.statusText);
-      }
+      await createTransaction(data);
+      await get().loadAllData();
     } 
     catch {
       set({ error: true });
@@ -37,8 +33,34 @@ const useFinanceStore = create((set, get) => ({
     finally {
       set({ loading: false });
     }
+  },
 
-    await get().loadAllData();
+  async updateTransaction(id, data) {
+    set({ loading: true, error: false });
+    try{
+      await updateTransaction(id, data);
+      await get().loadAllData();
+    } 
+    catch {
+      set({ error: true });
+    } 
+    finally {
+      set({ loading: false });
+    }
+  },
+
+  async deleteTransaction(id) {
+    set({ loading: true, error: false });
+    try{
+      await deleteTransaction(id);
+      await get().loadAllData();
+    } 
+    catch {
+      set({ error: true });
+    } 
+    finally {
+      set({ loading: false });
+    }
   },
 
 }));

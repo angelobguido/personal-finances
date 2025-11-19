@@ -13,7 +13,7 @@ var Db *sql.DB
 func GetFinances() ([]types.Finance, error) {
 	finances := []types.Finance{}
 
-	rows, err := Db.Query("SELECT id, name, category, amount, created_at FROM finance ORDER BY id")
+	rows, err := Db.Query("SELECT id, name, category, amount, created_at FROM finance ORDER BY created_at DESC")
 	if err != nil {
 		return nil, err
 	}
