@@ -61,7 +61,7 @@ function TransactionList() {
           <p>No transactions found</p>
         ) : (
           transactions.map((transaction) => (
-            <Transaction key={transaction.id} transactionData={transaction} onDelete={handleDelete} />
+            <Transaction key={transaction.id} transactionData={transaction} onUpdate={handleUpdate} onDelete={handleDelete} />
           ))
         )}
       </div>
