@@ -2,37 +2,58 @@ package types
 
 import "time"
 
-type Finance struct {
+type Transaction struct {
+	Id         int       `json:"id"`
+	Name       string    `json:"name"`
+	CategoryId int       `json:"category_id"`
+	Amount     float64   `json:"amount"`
+	Data       *any      `json:"data"`
+	CreatedAt  time.Time `json:"created_at"`
+}
+
+type Category struct {
 	Id        int       `json:"id"`
 	Name      string    `json:"name"`
-	Category  string    `json:"category"`
-	Amount    float64   `json:"amount"`
+	IsIncome  bool      `json:"is_income"`
+	Data      *any      `json:"data"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
-type Finances []Finance
+type TransactionCreateData struct {
+	Name       string    `json:"name"`
+	CategoryId int       `json:"category_id"`
+	Amount     float64   `json:"amount"`
+	CreatedAt  time.Time `json:"created_at"`
+	Data       *any      `json:"data"`
+}
 
-type FinanceRequest struct {
-	Name      *string    `json:"name"`
-	Category  *string    `json:"category"`
-	Amount    *float64   `json:"amount"`
-	CreatedAt *time.Time `json:"created_at"`
+type TransactionUpdateData struct {
+	Name       *string    `json:"name"`
+	CategoryId *int       `json:"category_id"`
+	Amount     *float64   `json:"amount"`
+	CreatedAt  *time.Time `json:"created_at"`
+	Data       *any       `json:"data"`
+}
+
+type CategoryCreateData struct {
+	Name     string `json:"name"`
+	IsIncome bool   `json:"is_income"`
+	Data     *any   `json:"data"`
+}
+
+type CategoryUpdateData struct {
+	Name     *string `json:"name"`
+	IsIncome *bool   `json:"is_income"`
+	Data     *any    `json:"data"`
 }
 
 type Report struct {
-	TotalIncome     float64          `json:"total_income"`
-	TotalExpense    float64          `json:"total_expense"`
-	NetTotal        float64          `json:"net_total"`
-	ExpensesSummary []ExpenseSummary `json:"expenses_summary"`
+	Categories []CategorySummary `json:"categories"`
 }
 
-type ExpenseSummary struct {
-	Category     string  `json:"category"`
-	Total        float64 `json:"total"`
-	ExpenseRatio float64 `json:"expense_ratio"`
-}
-
-type CategoryTotal struct {
-	Category string  `json:"category"`
+type CategorySummary struct {
+	Id       int     `json:"id"`
+	Name     string  `json:"category"`
+	IsIncome bool    `json:"is_income"`
 	Total    float64 `json:"total"`
 }
