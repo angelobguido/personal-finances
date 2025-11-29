@@ -35,17 +35,27 @@ func GetTransactions() ([]types.Transaction, error) {
 	return transactions, err
 }
 
-func CreateTransaction(data types.TransactionCreateData) (*types.Transaction, error) {
+func CreateTransaction(data types.TransactionRequestData) (*types.Transaction, error) {
 	var transaction = types.Transaction{}
 
-	if err := Db.QueryRow("INSERT INTO transaction(name, amount, category_id, created_at, data) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, category_id, amount, created_at, data", data.Name, data.Amount, data.CategoryId, data.CreatedAt, data.Data).Scan(&transaction.Id, &transaction.Name, &transaction.CategoryId, &transaction.Amount, &transaction.CreatedAt, &transaction.Data); err != nil {
+	if (data.Name == nil) || (data.CategoryId == nil) || (data.Amount == nil) {
+		return nil, fmt.Errorf("name, category_id and amount are required fields")
+	}
+
+	createdAt := time.Time{}
+
+	if data.CreatedAt != nil {
+		createdAt = *data.CreatedAt
+	}
+
+	if err := Db.QueryRow("INSERT INTO transaction(name, amount, category_id, created_at, data) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, category_id, amount, created_at, data", data.Name, data.Amount, data.CategoryId, createdAt, data.Data).Scan(&transaction.Id, &transaction.Name, &transaction.CategoryId, &transaction.Amount, &transaction.CreatedAt, &transaction.Data); err != nil {
 		return nil, err
 	}
 
 	return &transaction, nil
 }
 
-func GetTransactionById(id int) (*types.Transaction, error) {
+func GetTransactionById(id string) (*types.Transaction, error) {
 
 	transaction := types.Transaction{}
 
@@ -56,7 +66,7 @@ func GetTransactionById(id int) (*types.Transaction, error) {
 	return &transaction, nil
 }
 
-func UpdateTransactionById(id int, data types.TransactionUpdateData) (*types.Transaction, error) {
+func UpdateTransactionById(id string, data types.TransactionRequestData) (*types.Transaction, error) {
 
 	transaction := types.Transaction{}
 
@@ -69,7 +79,7 @@ func UpdateTransactionById(id int, data types.TransactionUpdateData) (*types.Tra
 
 }
 
-func DeleteTransactionById(id int) error {
+func DeleteTransactionById(id string) error {
 
 	if err := Db.QueryRow("DELETE FROM transaction WHERE id=$1", id).Err(); err != nil {
 		return err
@@ -105,16 +115,21 @@ func GetCategories() ([]types.Category, error) {
 
 }
 
-func CreateCategory(data types.CategoryCreateData) (*types.Category, error) {
+func CreateCategory(data types.CategoryRequestData) (*types.Category, error) {
 
 	category := types.Category{}
+
+	if (data.Name == nil) || (data.IsIncome == nil) {
+		return nil, fmt.Errorf("name and is_income are required fields")
+	}
+
 	if err := Db.QueryRow("INSERT INTO category(name, is_income, data) VALUES ($1, $2, $3) RETURNING id, name, is_income, data, created_at", data.Name, data.IsIncome, data.Data).Scan(&category.Id, &category.Name, &category.IsIncome, &category.Data, &category.CreatedAt); err != nil {
 		return nil, err
 	}
 	return &category, nil
 }
 
-func GetCategoryById(id int) (*types.Category, error) {
+func GetCategoryById(id string) (*types.Category, error) {
 
 	category := types.Category{}
 	if err := Db.QueryRow("SELECT id, name, is_income, data, created_at FROM category WHERE id=$1", id).Scan(&category.Id, &category.Name, &category.IsIncome, &category.Data, &category.CreatedAt); err != nil {
@@ -125,7 +140,7 @@ func GetCategoryById(id int) (*types.Category, error) {
 
 }
 
-func UpdateCategoryById(id int, data types.CategoryUpdateData) (*types.Category, error) {
+func UpdateCategoryById(id string, data types.CategoryRequestData) (*types.Category, error) {
 
 	category := types.Category{}
 	if err := Db.QueryRow("UPDATE category SET name = COALESCE($1, name), is_income = COALESCE($2, is_income), data = COALESCE($3, data) WHERE id=$4 RETURNING id, name, is_income, data, created_at", data.Name, data.IsIncome, data.Data, id).Scan(&category.Id, &category.Name, &category.IsIncome, &category.Data, &category.CreatedAt); err != nil {
@@ -136,7 +151,7 @@ func UpdateCategoryById(id int, data types.CategoryUpdateData) (*types.Category,
 
 }
 
-func DeleteCategoryById(id int) error {
+func DeleteCategoryById(id string) error {
 
 	if err := Db.QueryRow("DELETE FROM category WHERE id=$1", id).Err(); err != nil {
 		return err

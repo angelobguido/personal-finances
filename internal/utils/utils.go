@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 )
 
 func Encode[T any](w http.ResponseWriter, v *T, status int) error {
@@ -42,4 +43,8 @@ func PtrIfNotZero[T comparable](v T) *T {
 		return nil
 	}
 	return &v
+}
+
+func ParseDate(dateStr string) (time.Time, error) {
+	return time.Parse("2006-01-02", dateStr)
 }

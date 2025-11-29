@@ -3,12 +3,10 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 
 	"github.com/angelobguido/personal-finances/internal/api"
-	"github.com/angelobguido/personal-finances/internal/renderer"
 	"github.com/angelobguido/personal-finances/internal/storage"
 	"github.com/angelobguido/personal-finances/internal/utils"
 	"github.com/joho/godotenv"
@@ -19,8 +17,6 @@ func main() {
 
 	fs := http.FileServer(http.Dir("static"))
 	front := http.FileServer(http.Dir("frontend/dist"))
-
-	renderer.Templates = template.Must(template.ParseGlob("templates/*.html"))
 
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, relying on system environment variables.")
@@ -42,19 +38,22 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	//mux.HandleFunc("GET /{$}", api.HealthCheck)
-	mux.HandleFunc("GET /finances/{Id}", api.GetFinanceById)
-	mux.HandleFunc("PATCH /finances/{Id}", api.UpdateFinanceById)
-	mux.HandleFunc("DELETE /finances/{Id}", api.DeleteFinanceById)
-	mux.HandleFunc("GET /finances", api.GetFinances)
-	mux.HandleFunc("POST /finances", api.CreateFinance)
+	// Transaction endpoints
+	mux.HandleFunc("GET /transactions/{Id}", api.GetTransactionById)
+	mux.HandleFunc("PATCH /transactions/{Id}", api.UpdateTransactionById)
+	mux.HandleFunc("DELETE /transactions/{Id}", api.DeleteTransactionById)
+	mux.HandleFunc("GET /transactions", api.GetTransactions)
+	mux.HandleFunc("POST /transactions", api.CreateTransaction)
 
-	mux.HandleFunc("GET /home", renderer.RenderHome)
-	mux.HandleFunc("GET /report", renderer.RenderReport)
-	mux.HandleFunc("POST /render/finances", renderer.CreateFinance)
-	mux.HandleFunc("GET /render/finances/edit/{Id}", renderer.RenderEditFinance)
-	mux.HandleFunc("PATCH /render/finances/{Id}", renderer.UpdateFinance)
-	mux.HandleFunc("GET /render/finances/{Id}", renderer.RenderFinance)
+	// Category endpoints
+	mux.HandleFunc("GET /categories/{Id}", api.GetCategoryById)
+	mux.HandleFunc("PATCH /categories/{Id}", api.UpdateCategoryById)
+	mux.HandleFunc("DELETE /categories/{Id}", api.DeleteCategoryById)
+	mux.HandleFunc("GET /categories", api.GetCategories)
+	mux.HandleFunc("POST /categories", api.CreateCategory)
+
+	// Report endpoint
+	mux.HandleFunc("GET /report", api.GetReport)
 
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 	mux.Handle("/", front)
