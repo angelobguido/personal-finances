@@ -20,11 +20,11 @@ type Category struct {
 }
 
 type TransactionRequestData struct {
-	Name       *string    `json:"name"`
-	CategoryId *int       `json:"category_id"`
-	Amount     *float64   `json:"amount"`
-	CreatedAt  *time.Time `json:"created_at"`
-	Data       *any       `json:"data"`
+	Name       *string  `json:"name"`
+	CategoryId *int     `json:"category_id"`
+	Amount     *float64 `json:"amount"`
+	CreatedAt  *string  `json:"created_at"`
+	Data       *any     `json:"data"`
 }
 
 type CategoryRequestData struct {

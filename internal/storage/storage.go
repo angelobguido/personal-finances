@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/angelobguido/personal-finances/internal/types"
+	"github.com/angelobguido/personal-finances/internal/utils"
 )
 
 var Db *sql.DB
@@ -45,7 +46,11 @@ func CreateTransaction(data types.TransactionRequestData) (*types.Transaction, e
 	createdAt := time.Time{}
 
 	if data.CreatedAt != nil {
-		createdAt = *data.CreatedAt
+		var err error
+		createdAt, err = utils.ParseDate(*data.CreatedAt)
+		if err != nil {
+			return nil, fmt.Errorf("invalid created_at format, expected YYYY-MM-DD")
+		}
 	}
 
 	if err := Db.QueryRow("INSERT INTO transaction(name, amount, category_id, created_at, data) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, category_id, amount, created_at, data", data.Name, data.Amount, data.CategoryId, createdAt, data.Data).Scan(&transaction.Id, &transaction.Name, &transaction.CategoryId, &transaction.Amount, &transaction.CreatedAt, &transaction.Data); err != nil {

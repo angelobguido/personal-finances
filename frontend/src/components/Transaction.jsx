@@ -6,22 +6,14 @@ function Transaction({ transactionData, onUpdate, onDelete }) {
 
     const [name, setName] = useState(transactionData.name);
     const [amount, setAmount] = useState(transactionData.amount.toString());
-    const [category, setCategory] = useState(transactionData.category);
-    const [createdAt, setCreatedAt] = useState(new Date(transactionData.created_at).toISOString().split('T')[0]);
+    const [categoryId, setCategoryId] = useState(transactionData.category_id);
+    const [createdAt, setCreatedAt] = useState(transactionData.created_at);
 
     const editingForm = (
         <form className="p-4 border rounded shadow flex flex-row flex-none justify-between items-center">
             <div className="p-2 flex flex-row flex-none justify-between items-center w-4/5">
                 <div className="flex flex-row gap-4 items-center">
-                    <select className="text-gray-600 w-16" value={category} onChange={(e) => setCategory(e.target.value)}>
-                        <option>Fixed Cost</option>
-                        <option>Comfort</option>
-                        <option>Goals</option>
-                        <option>Pleasures</option>
-                        <option>Financial Freedom</option>
-                        <option>Knowledge</option>
-                        <option>Income</option>
-                    </select>
+                    {/* category */}
                     <div className="flex flex-col">
                         <input className="font-semibold" value={name} onChange={(e) => setName(e.target.value)} />
                         <input type="number" step="0.01" className="text-green-600" value={amount} onChange={(e) => setAmount(e.target.value)} />
@@ -34,8 +26,8 @@ function Transaction({ transactionData, onUpdate, onDelete }) {
                     onUpdate(transactionData.id, {
                         name: name,
                         amount: parseFloat(amount),
-                        category: category,
-                        created_at: new Date(createdAt).toISOString()
+                        category_id: categoryId,
+                        created_at: createdAt
                     });
                     setIsEditing(false);
                 }}>
@@ -58,7 +50,7 @@ function Transaction({ transactionData, onUpdate, onDelete }) {
                         <span className="text-green-600">R$ {transactionData.amount.toFixed(2)}</span>
                     </div>
                 </div>
-                <span className="text-gray-400">{new Date(transactionData.created_at).toLocaleDateString()}</span>
+                <span className="text-gray-400">{transactionData.created_at}</span>
             </div>
             <div className="flex flex-row justify-end items-center flex-wrap gap-1">
                 <button className="bg-yellow-400 text-white rounded shadow h-8 hover:opacity-80 cursor-pointer p-2 flex items-center" onClick={() => setIsEditing(true)}>

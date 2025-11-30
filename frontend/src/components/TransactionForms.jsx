@@ -4,21 +4,20 @@ function TransactionForms({onAdd, onCancel}) {
 
     const [name, setName] = useState('Nova Transação');
     const [amount, setAmount] = useState('100.00');
-    const [category, setCategory] = useState('Fixed Cost');
-    const [createdAt, setCreatedAt] = useState(new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString().split('T')[0]);
+    const [categoryId, setCategoryId] = useState(5);
+    const [createdAt, setCreatedAt] = useState(new Date().toISOString().split('T')[0]);
 
     const handleAdd = () => {
         onAdd({
             name: name,
             amount: parseFloat(amount),
-            category: category,
-            createdAt: new Date(createdAt).toISOString()
+            categoryId: categoryId,
+            createdAt: createdAt
         });
     };
 
     const handleOnNameChange = (e) => setName(e.target.value);
     const handleOnAmountChange = (e) => setAmount(e.target.value);
-    const handleOnCategoryChange = (e) => setCategory(e.target.value);
     const handleOnCreatedAtChange = (e) => setCreatedAt(e.target.value);
 
     return (
@@ -34,15 +33,6 @@ function TransactionForms({onAdd, onCancel}) {
                 </div>
                 <div className="flex flex-row gap-2">
                     <p>Category:</p>
-                    <select value={category} onChange={handleOnCategoryChange} className="bg-blue-400" name="category" required>
-                        <option>Fixed Cost</option>
-                        <option>Comfort</option>
-                        <option>Goals</option>
-                        <option>Pleasures</option>
-                        <option>Financial Freedom</option>
-                        <option>Knowledge</option>
-                        <option>Income</option>
-                    </select>
                 </div>
                 <div className="flex flex-row gap-2">
                     <p>Created At:</p>

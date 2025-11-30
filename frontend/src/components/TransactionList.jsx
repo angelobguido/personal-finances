@@ -1,19 +1,17 @@
 import Transaction from './Transaction.jsx';
 import TransactionForms from './TransactionForms.jsx';
-import { useFinanceStore } from '../store/useFinanceStore.js';
 import { useState } from 'react';
 
-function TransactionList() {
-  const {transactions, loading, error, addTransaction, updateTransaction, deleteTransaction} = useFinanceStore();
-
+function TransactionList({ transactions, onChangeTransactions }) {
+  
   const [isAdding, setIsAdding] = useState(false);
   
   const handleUpdate = async (id, payload) => {
-    await updateTransaction(id, payload);
+    await onChangeTransactions.update(id, payload);
   };
 
   const handleDelete = async (id) => {
-    await deleteTransaction(id);
+    await onChangeTransactions.delete(id);
   };
 
   const handleClick = () => {
@@ -28,11 +26,11 @@ function TransactionList() {
     const data = {
         name: payload.name,
         amount: payload.amount,
-        category: payload.category,
+        category_id: payload.categoryId,
         created_at: payload.createdAt
     };
 
-    await addTransaction(data);
+    await onChangeTransactions.create(data);
     setIsAdding(false);
   };
 
@@ -43,15 +41,6 @@ function TransactionList() {
     </div>
   </button>
   );
-
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Something went wrong.</div>;
-  }
 
   return (
     <>
