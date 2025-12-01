@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-function TransactionForms({onAdd, onCancel}) {
+function TransactionForms({onAdd, onCancel, categories}) {
 
     const [name, setName] = useState('Nova Transação');
     const [amount, setAmount] = useState('100.00');
-    const [categoryId, setCategoryId] = useState(5);
+    const [categoryId, setCategoryId] = useState(categories.length > 0 ? categories[0].id : null);
     const [createdAt, setCreatedAt] = useState(new Date().toISOString().split('T')[0]);
 
     const handleAdd = () => {
@@ -33,6 +33,11 @@ function TransactionForms({onAdd, onCancel}) {
                 </div>
                 <div className="flex flex-row gap-2">
                     <p>Category:</p>
+                    <select className="text-gray-600 w-16" value={categoryId} onChange={(e) => setCategoryId(parseInt(e.target.value))}>
+                        {categories.map((cat) => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))}
+                    </select>
                 </div>
                 <div className="flex flex-row gap-2">
                     <p>Created At:</p>

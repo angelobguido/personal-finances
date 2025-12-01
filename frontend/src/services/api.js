@@ -172,9 +172,9 @@ async function deleteCategory(id) {
     }
 }
 
-async function getReport() {
+async function getReport(startDate, endDate) {
     try {
-        const response = await fetch('/report');
+        const response = await fetch(`/report?start=${startDate}&end=${endDate}`);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);

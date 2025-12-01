@@ -8,40 +8,48 @@ function App() {
   const [categories, setCategories] = useState([]);
   const [transactions, setTransactions] = useState([]);
   
-  useEffect(async () => {
+  const loadCategories = async () => {
     const categoriesData = await getCategories();
     setCategories(categoriesData);
+  }
+
+  const loadTransactions = async () => {
     const transactionsData = await getTransactions();
     setTransactions(transactionsData);
+  }
+
+  useEffect(async () => {
+    await loadCategories();
+    await loadTransactions();
   }, []);
 
   const handleChangeTransactions = {
     create: async (data) => {
-      const newTransaction = await createTransaction(data);
-      setTransactions([...transactions, newTransaction]);
+      await createTransaction(data);
+      await loadTransactions();
     },
     update: async (id, payload) => {
-      const updatedTransaction = await updateTransaction(id, payload);
-      setTransactions(transactions.map((transaction) => (transaction.id === id ? updatedTransaction : transaction)));
+      await updateTransaction(id, payload);
+      await loadTransactions();
     },
     delete: async (id) => {
       await deleteTransaction(id);
-      setTransactions(transactions.filter((transaction) => transaction.id !== id));
+      await loadTransactions();
     }
   };
 
   const handleChangeCategories = {
     create: async (data) => {
-      const newCategory = await createCategory(data);
-      setCategories([...categories, newCategory]);
+      await createCategory(data);
+      await loadCategories();
     },
     update: async (id, payload) => {
-      const updatedCategory = await updateCategory(id, payload);
-      setCategories(categories.map((category) => (category.id === id ? updatedCategory : category)));
+      await updateCategory(id, payload);
+      await loadCategories();
     },
     delete: async (id) => {
       await deleteCategory(id);
-      setCategories(categories.filter((category) => category.id !== id));
+      await loadCategories();
     }
   };
 

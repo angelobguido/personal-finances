@@ -4,7 +4,7 @@ function MainContent({ transactions, categories, onChangeTransactions, onChangeC
 
   return (
     <main className="p-8">
-        <TransactionView transactions={transactions} onChangeTransactions={onChangeTransactions} />
+        <TransactionView transactions={transactions} onChangeTransactions={onChangeTransactions} categories={categories} />
     </main>
   )
 }

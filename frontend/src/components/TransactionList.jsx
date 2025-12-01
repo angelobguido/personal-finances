@@ -2,7 +2,7 @@ import Transaction from './Transaction.jsx';
 import TransactionForms from './TransactionForms.jsx';
 import { useState } from 'react';
 
-function TransactionList({ transactions, onChangeTransactions }) {
+function TransactionList({ transactions, onChangeTransactions, categories }) {
   
   const [isAdding, setIsAdding] = useState(false);
   
@@ -45,12 +45,12 @@ function TransactionList({ transactions, onChangeTransactions }) {
   return (
     <>
       <div className="flex flex-col gap-4 flex-wrap">
-        {isAdding ? (<TransactionForms onAdd={handleAdd} onCancel={handleCancel} />): (addButton)}
+        {isAdding ? (<TransactionForms onAdd={handleAdd} onCancel={handleCancel} categories={categories} />): (addButton)}
         {transactions.length === 0 ? (
           <p>No transactions found</p>
         ) : (
           transactions.map((transaction) => (
-            <Transaction key={transaction.id} transactionData={transaction} onUpdate={handleUpdate} onDelete={handleDelete} />
+            <Transaction key={transaction.id} transactionData={transaction} onUpdate={handleUpdate} onDelete={handleDelete} categories={categories} />
           ))
         )}
       </div>
