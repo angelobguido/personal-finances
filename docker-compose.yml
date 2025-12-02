@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_CONNECTION_STRING=postgres://postgres:postgres@host.docker.internal:5432/postgres?sslmode=disable
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

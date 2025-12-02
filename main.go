@@ -58,7 +58,7 @@ func main() {
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 	mux.Handle("/", front)
 
-	fmt.Printf("Starting server at port 8090\n")
+	fmt.Printf("Starting server at port 5000\n")
 
-	log.Fatal(http.ListenAndServe(":8090", mux))
+	log.Fatal(http.ListenAndServe(":5000", mux))
 }
