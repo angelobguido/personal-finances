@@ -95,7 +95,7 @@ function ReportView() {
                     <h4 className='text-lg font-semibold mb-3'>Expenses</h4>
                     <div className='flex flex-row flex-wrap justify-center items-start gap-4'>
                         {reportData.categories.filter(cat => !cat.is_income).map((category) => {
-                            const percentage = report.totalExpense > 0 ? (category.total / report.totalExpense * 100) : 0;
+                            const percentage = report.totalIncome > 0 ? (category.total / report.totalIncome * 100) : 0;
                             
                             return (
                                 <div key={category.id} className='border rounded p-4 shadow-md min-w-[150px]'>
@@ -104,7 +104,7 @@ function ReportView() {
                                         ${category.total.toFixed(2)}
                                     </p>
                                     <p className='text-gray-600 text-sm mt-1'>
-                                        {percentage.toFixed(1)}% of expenses
+                                        {percentage.toFixed(1)}% of income
                                     </p>
                                 </div>
                             );
