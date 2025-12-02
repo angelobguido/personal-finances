@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function Transaction({ transactionData, categories, onUpdate, onDelete }) {
+function Transaction({ transactionData, categories, onUpdate, onDelete, onDuplicate }) {
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -60,9 +60,12 @@ function Transaction({ transactionData, categories, onUpdate, onDelete }) {
                         <span className="text-green-600">R$ {transactionData.amount.toFixed(2)}</span>
                     </div>
                 </div>
-                <span className="text-gray-400">{transactionData.created_at}</span>
+                <span className="text-gray-400">{new Date(transactionData.created_at).toISOString().split('T')[0]}</span>
             </div>
             <div className="flex flex-row justify-end items-center flex-wrap gap-1">
+                <button className="bg-blue-500 text-white rounded shadow h-8 hover:opacity-80 cursor-pointer p-2 flex items-center" onClick={() => onDuplicate({...transactionData, created_at: new Date(transactionData.created_at).toISOString().split('T')[0]})}>
+                    <p>Duplicate</p>
+                </button>
                 <button className="bg-yellow-400 text-white rounded shadow h-8 hover:opacity-80 cursor-pointer p-2 flex items-center" onClick={() => setIsEditing(true)}>
                     <p>Edit</p>
                 </button>

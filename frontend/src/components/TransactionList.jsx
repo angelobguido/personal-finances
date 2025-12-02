@@ -34,6 +34,17 @@ function TransactionList({ transactions, onChangeTransactions, categories }) {
     setIsAdding(false);
   };
 
+  const handleDuplicate = async (transactionData) => {
+    const data = {
+        name: transactionData.name,
+        amount: transactionData.amount,
+        category_id: transactionData.category_id,
+        created_at: transactionData.created_at
+    };
+
+    await onChangeTransactions.create(data);
+  };
+
   const addButton = (
   <button className="bg-blue-500 text-white rounded shadow h-10 hover:opacity-80 cursor-pointer p-4" onClick={handleClick}>
     <div className="flex flex-row justify-center items-center h-full">
@@ -50,7 +61,7 @@ function TransactionList({ transactions, onChangeTransactions, categories }) {
           <p>No transactions found</p>
         ) : (
           transactions.map((transaction) => (
-            <Transaction key={transaction.id} transactionData={transaction} onUpdate={handleUpdate} onDelete={handleDelete} categories={categories} />
+            <Transaction key={transaction.id} transactionData={transaction} onUpdate={handleUpdate} onDelete={handleDelete} onDuplicate={handleDuplicate} categories={categories} />
           ))
         )}
       </div>

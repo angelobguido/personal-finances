@@ -24,7 +24,6 @@ function ReportView() {
 
     let report = {};
     if (reportData){
-        console.log(reportData);
         const totalIncome = reportData.categories.reduce((sum, category) => sum + (category.is_income ? category.total : 0), 0);
         const totalExpense = reportData.categories.reduce((sum, category) => sum + (!category.is_income ? category.total : 0), 0);
         const netTotal = totalIncome - totalExpense;
